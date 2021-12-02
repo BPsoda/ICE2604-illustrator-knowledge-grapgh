@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="This is our final project">
+    <meta name="author" content="">
+    <title>Final_Project_Picture</title>
+
+    <!-- Bootstrap core CSS -->
+<link href="static/example.css" rel="stylesheet">
+<link href="headers.css" rel="stylesheet">
+<link rel="stylesheet" href="static/sidebars.css">
+<!-- drag -->
+<script src="static/drag.js"></script>
+    <script src="static/vue.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <style>
+      *{
+        margin: 0px;
+        padding: 0px;
+        }
+        #container{
+        position: relative;
+        background:black;
+        }
+        .box{
+        width:45%;
+        padding: 5px;
+        float: left;
+        margin: 0px auto;
+        }
+        .box_img{
+        padding: 5px;
+        border: 1px solid #DCDCDC;
+        box-shadow: 0 0 5px #ccc;
+        border-radius: 5px;
+        }
+        .box_img img{
+        width: 35vw;
+        }
+        /*********LoadingPage*************/
+
+    #loading {
+      position: absolute;
+      background-color: #FFF;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+    }
+    #loading_bg{
+      background-color: rgba(0,0,0,0.7);
+    }
+
+    .loader {
+      width: 250px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      font-family: helvetica, arial, sans-serif;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #ce4233;
+      letter-spacing: 0.2em;
+    }
+    .loader::before, .loader::after {
+      content: "";
+      display: block;
+      width: 15px;
+      height: 15px;
+      background: #ce4233;
+      position: absolute;
+      -webkit-animation: load .7s infinite alternate ease-in-out;
+      animation: load .7s infinite alternate ease-in-out;
+    }
+    .loader::before {
+      top: 0;
+    }
+    .loader::after {
+      bottom: 0;
+    }
+
+    @-webkit-keyframes load {
+      0% {
+        left: 0;
+        height: 30px;
+        width: 15px;
+      }
+      50% {
+        height: 8px;
+        width: 40px;
+      }
+      100% {
+        left: 235px;
+        height: 30px;
+        width: 15px;
+      }
+    }
+
+    @keyframes load {
+      0% {
+        left: 0;
+        height: 30px;
+        width: 15px;
+      }
+      50% {
+        height: 8px;
+        width: 40px;
+      }
+      100% {
+        left: 235px;
+        height: 30px;
+        width: 15px;
+      }
+    }
+
+    /********************************/
+
+  </style>
+  <script>
+      window.onload=function(){
+  
+  imgLocation("container","box");
+  var imgData={
+    "data":[
+        ]
+    }
+    window.onscroll=function(){
+ //  console.log(document.documentElement.scrollTop);
+   if(checkFlag()){
+    var cparent=document.getElementById("container");
+    for(var i=0;i<imgData.data.length;i++){
+    //  var ccontent=document.createElement("div");
+    //  ccontent.className="box";
+    //  cparent.appendChild(ccontent);
+    //  var boximg=document.createElement("div");
+    //  boximg.className="box_img";
+    //  ccontent.appendChild(boximg);
+    //  var img=document.createElement("img");
+    //  img.src=imgData.data[i].src;
+    //  boximg.appendChild(img);
+      
+     //另外一种方法在div后边追加内容，不覆盖原有内容
+    var content="<div class='box'><div class='box_img'><img src='"+imgData.data[i].src+"'/></div></div>";
+    cparent.innerHTML+=content;
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    var xmlhttp;
+	if (window.XMLHttpRequest)
+	{
+		// IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp=new XMLHttpRequest();
+	}
+	else
+	{
+		// IE6, IE5 浏览器执行代码
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 &&xmlhttp.status==200)
+		{
+		    imgData.data=eval(xmlhttp.responseText);
+		}
+	}
+	xmlhttp.open("GET","/a?t="+ Math.random(),true);
+	xmlhttp.send();
+    ////////////////////////////////////////////////////////////////////////////////
+    imgLocation("container","box");
+   }
+  }
+ }
+  
+ function checkFlag(){
+  var cparent=document.getElementById("container");
+  var ccontent=getChildElement(cparent,"box");//图片的所有box数
+  var lastContentHeight=ccontent[ccontent.length-1].offsetTop;//最后一张图片距离顶部高度
+  var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;//滚动条距离顶部高度
+  var pageHeight=document.documentElement.clientHeight||document.body.clientHeight;//屏幕高度
+ // console.log(lastContentHeight+","+scrollTop+","+pageHeight);
+  if(lastContentHeight<scrollTop+pageHeight){
+   return true;
+  }
+ }
+  
+ function imgLocation(parent,content){
+  var cparent=document.getElementById(parent);
+  var ccontent=getChildElement(cparent,content);//图片的所有box数
+  var imgWidth=ccontent[0].offsetWidth;//图片宽度
+  var num=Math.floor(document.documentElement.clientWidth/imgWidth);//一行放图片个数
+  cparent.style.cssText="width:"+imgWidth*num+"px;margin:0px auto";//container的宽度
+  var boxHeightArr=[];//每一列box高度
+  for(var i=0;i<ccontent.length;i++){
+   if(i<num){
+    boxHeightArr[i]=ccontent[i].offsetHeight;
+   }else{
+    var minHeight=Math.min.apply(null,boxHeightArr);//最小高度
+    var minIndex = getMinheightLocation(boxHeightArr,minHeight);//得到最小高度下标
+ //   console.log(minHeight+","+minIndex);
+    ccontent[i].style.position="absolute";
+    ccontent[i].style.top=minHeight+"px";//距离顶部高度
+    ccontent[i].style.left=ccontent[minIndex].offsetLeft+"px";//距离左边长度
+    boxHeightArr[minIndex]+=ccontent[i].offsetHeight;
+ //   console.log(ccontent[i].offsetHeight+","+ccontent[i].height);//ccontent[i].height=undefined
+     
+   }
+  }
+ }
+  
+ function getMinheightLocation(boxHeightArr,minHeight){
+  for(var i in boxHeightArr){
+   if(boxHeightArr[i]==minHeight){
+    return i
+   }
+  }
+ }
+  
+ function getChildElement(parent,content){
+  //将parent下有content的全部取出
+  var contentArr=[];
+  var allContent=parent.getElementsByTagName("*");
+  for(i=0;i<allContent.length;i++){
+   if(allContent[i].className=="box"){
+    contentArr.push(allContent[i]);
+   }
+  }
+  return contentArr;
+ }
+ 
+  </script>
+ </head>
+ <body>
+  <div id="loading">
+    <div id="loading_bg">
+        <div class="loader">Loading...</div>
+    </div>
+</div>
+  <header class="p-3 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+          <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftva3.sinaimg.cn%2Flarge%2F006yt1Omly1g9lr654eufj314a18ghdt.jpg&refer=http%3A%2F%2Ftva3.sinaimg.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640417813&t=46452ea5d6c1fb234cb50db394caf3cc" class="bi me-2" width="60" height="48" role="img"></img>
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a href="home" class="nav-link px-2 text-white">Home</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">Authors</a></li>
+          <li><a href="picture" class="nav-link px-2 text-white">Pictures</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">Tags</a></li>
+          <li><a href="search" class="nav-link px-2 text-white">Search</a></li>
+        </ul>
+
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+          <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+        </form>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-warning">Commit</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div id="container">
+    {% for urls in initli  %}
+   <div class="box">
+    <div class="box_img">
+     <img src="{[urls]}" />
+    </div>
+   </div>
+   {% endfor %}
+
+  </div>
+  <script>
+    //Loading页面
+document.onreadystatechange=function () {
+          if (document.readyState=="complete"){
+               loadingFade();
+          }
+}
+function loadingFade() {
+     var opacity=1;
+     //var loadingPage=document.getElementById('loading');
+     var loadingBackground=document.getElementById('loading_bg');
+     var time=setInterval(function () {
+          if (opacity<=0){
+               clearInterval(time);
+               //loadingPage.remove();
+               $('#loading').remove();
+          }
+
+          loadingBackground.style.opacity=opacity;
+          opacity-=0.4;
+     },100);
+}
+
+  </script>
+ </body>
+</html>
