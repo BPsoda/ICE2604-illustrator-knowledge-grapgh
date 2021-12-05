@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+     <script src="/static/echarts.js"></script>
+        <script src="/static/jquery.js"></script>
+        <link href="static/example.css" rel="stylesheet">
+        <link href="headers.css" rel="stylesheet">
+        <link rel="stylesheet" href="static/sidebars.css">
+        <!-- drag -->
+        <script src="static/drag.js"></script>
+     <header class="p-3 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+          <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftva3.sinaimg.cn%2Flarge%2F006yt1Omly1g9lr654eufj314a18ghdt.jpg&refer=http%3A%2F%2Ftva3.sinaimg.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640417813&t=46452ea5d6c1fb234cb50db394caf3cc" class="bi me-2" width="60" height="48" role="img"></img>
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a href="home" class="nav-link px-2 text-white">Home</a></li>
+          <li><a href="static" class="nav-link px-2 text-white">static</a></li>
+          <li><a href="picture" class="nav-link px-2 text-white">Pictures</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">Tags</a></li>
+          <li><a href="search" class="nav-link px-2 text-white">Search</a></li>
+
+        </ul>
+      </div>
+    </div>
+  </header>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+    function imgerrorfun(x){
+        var img=event.srcElement;
+        img.src=x;
+        img.onerror=null;
+    }
+  </script>
+  <style>
+      *{
+        margin: 0px;
+        padding: 0px;
+        }
+        #container{
+        position: relative;
+        }
+        body{
+                background-color:rgb(171, 235, 243);
+        }
+        .box{
+        padding: 5px;
+        float: left;
+        margin: 0px auto;
+        }
+        .box_img{
+        padding: 5px;
+        background-color: white;
+        border: 1px solid #DCDCDC;
+        box-shadow: 0 0 5px #ccc;
+        border-radius: 5px;
+        }
+        .box_img:hover{
+				box-shadow: 0 0 10px gray;
+			}
+        .box_img img{
+        width: 500px;
+        }
+        /*********LoadingPage*************/
+
+    #loading {
+      position: absolute;
+      background-color: #FFF;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+    }
+    #loading_bg{
+      background-color: rgba(0,0,0,0.7);
+    }
+
+    .loader {
+      width: 250px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      font-family: helvetica, arial, sans-serif;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #ce4233;
+      letter-spacing: 0.2em;
+    }
+    .loader::before, .loader::after {
+      content: "";
+      display: block;
+      width: 15px;
+      height: 15px;
+      background: #ce4233;
+      position: absolute;
+      -webkit-animation: load .7s infinite alternate ease-in-out;
+      animation: load .7s infinite alternate ease-in-out;
+    }
+    .loader::before {
+      top: 0;
+    }
+    .loader::after {
+      bottom: 0;
+    }
+
+    @-webkit-keyframes load {
+      0% {
+        left: 0;
+        height: 30px;
+        width: 15px;
+      }
+      50% {
+        height: 8px;
+        width: 40px;
+      }
+      100% {
+        left: 235px;
+        height: 30px;
+        width: 15px;
+      }
+    }
+
+    @keyframes load {
+      0% {
+        left: 0;
+        height: 30px;
+        width: 15px;
+      }
+      50% {
+        height: 8px;
+        width: 40px;
+      }
+      100% {
+        left: 235px;
+        height: 30px;
+        width: 15px;
+      }
+    }
+
+    /********************************/
+    /* .left{
+      top: 0;
+        height: 100vh;
+        border-right: 1px solid gold;
+        overflow:auto;
+        position: fixed;
+        width: 14vw;
+    }
+    .left div{
+        width: 100%;
+        height: 200px;
+        text-align: center;
+        align-items:center;
+        overflow: hidden;
+    } */
+/* ********************************** */
+    .tag_sel{
+      background-color: cyan;border: 1px solid black;margin: 5px;border-radius: 5%;box-shadow: 0 0 3px;user-select: none;cursor:pointer;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;
+    }
+  </style>
+  <script>
+      function getRandomArrayElements(arr, count) {
+var shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
+while (i-- > min) {
+index = Math.floor((i + 1) * Math.random());
+temp = shuffled[index];
+shuffled[index] = shuffled[i];
+shuffled[i] = temp;
+}
+return shuffled.slice(min);
+}
+    var gonelen=0;
+    
+  var imgData={
+    "data":[
+      {% for flask_ in flask_datas %}{"src":"{[flask_[1]]}","id":"{[flask_[0]]}","tsrc":"{[flask_[2]]}"},{% endfor %}
+    ]
+    }
+function check_bottom(){
+    if((document.body.scrollTop+document.body.clientHeight-document.body.scrollHeight>-document.body.clientHeight/2)&&(document.getElementById("container").lastChild.firstChild.firstChild.firstChild.complete)){
+        var cparent=document.getElementById("container");
+        for(var i=0;(i<2)&&(gonelen<imgData.data.length);i++,gonelen++){
+        if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a  href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
+    }
+    }
+}
+      window.onload=function(){
+    var clo=self.setInterval('imgLocation("container","box")',500);
+    var clo2=self.setInterval('check_bottom()',500);
+      window.onscroll=function(){
+   if(checkFlag()&&(document.getElementById("container").lastChild.firstChild.firstChild.firstChild.complete)){
+    var cparent=document.getElementById("container");
+    for(var i=0;(i<2)&&(gonelen<imgData.data.length);i++,gonelen++){
+    if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a  href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
+    }
+   }
+  }
+ }
+  
+ function checkFlag(){
+  var cparent=document.getElementById("container");
+  var ccontent=getChildElement(cparent,"box");//图片的所有box数
+  var lastContentHeight=ccontent[ccontent.length-1].offsetTop;//最后一张图片距离顶部高度
+  var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;//滚动条距离顶部高度
+  var pageHeight=document.documentElement.clientHeight||document.body.clientHeight;//屏幕高度
+ // console.log(lastContentHeight+","+scrollTop+","+pageHeight);
+  if(lastContentHeight<scrollTop+pageHeight){
+   return true;
+  }
+ }
+  
+ function imgLocation(parent,content){
+  var cparent=document.getElementById(parent);
+  var ccontent=getChildElement(cparent,content);//图片的所有box数
+  var imgWidth=ccontent[0].offsetWidth;//图片宽度
+  var num=Math.floor(document.documentElement.clientWidth/imgWidth);//一行放图片个数
+  cparent.style.cssText="width:"+imgWidth*num+"px;margin:0px auto";//container的宽度
+  var boxHeightArr=[];//每一列box高度
+  for(var i=0;i<ccontent.length;i++){
+   if(i<num){
+    boxHeightArr[i]=ccontent[i].offsetHeight;
+   }else{
+    var minHeight=Math.min.apply(null,boxHeightArr);//最小高度
+    var minIndex = getMinheightLocation(boxHeightArr,minHeight);//得到最小高度下标
+ //   console.log(minHeight+","+minIndex);
+    ccontent[i].style.position="absolute";
+    ccontent[i].style.top=minHeight+"px";//距离顶部高度
+    ccontent[i].style.left=ccontent[minIndex].offsetLeft+"px";//距离左边长度
+    boxHeightArr[minIndex]+=ccontent[i].offsetHeight;
+ //   console.log(ccontent[i].offsetHeight+","+ccontent[i].height);//ccontent[i].height=undefined
+     
+   }
+  }
+ }
+  
+ function getMinheightLocation(boxHeightArr,minHeight){
+  for(var i in boxHeightArr){
+   if(boxHeightArr[i]==minHeight){
+    return i
+   }
+  }
+ }
+  
+ function getChildElement(parent,content){
+  //将parent下有content的全部取出
+  var contentArr=[];
+  var allContent=parent.getElementsByTagName("*");
+  for(i=0;i<allContent.length;i++){
+   if(allContent[i].className=="box"){
+    contentArr.push(allContent[i]);
+   }
+  }
+  return contentArr;
+ }
+ 
+  </script>
+ </head>
+ <body>
+  <div id="loading">
+    <div id="loading_bg">
+        <div class="loader">Loading...</div>
+    </div>
+</div>
+<script>
+  tags_set=new Set([{% for i in _the_tags%}"{[i]}",{% endfor %}]);
+  ftags_set=new Set([{% for i in _the_ftags%}"{[i]}",{% endfor %}]);
+  function addtag(tag){
+    if(tags_set.has(tag)){tags_set.delete(tag);document.getElementById(tag).style["background-color"]="gray";ftags_set.add(tag);}
+    else if(ftags_set.has(tag)){ftags_set.delete(tag);document.getElementById(tag).style["background-color"]="cyan"}
+    else{tags_set.add(tag);document.getElementById(tag).style["background-color"]="lime";}
+  }
+  function redire(){
+    var _tags='';
+    var _ftags='';
+    for(i of tags_set)_tags+=i+',';
+    for(i of ftags_set)_ftags+=i+',';
+    window.location.href="tags?tags="+_tags+"&ftags="+_ftags;
+  }
+</script>
+  <div style="position: fixed;top: 2%;width: 12vw;right: -1.3vw;bottom: 16%;overflow-x: hidden;margin: 0;padding: 0;background-color: white;border: 1px solid #DCDCDC;box-shadow: 0 0 5px #ccc;border-radius: 5px;">
+      {% for tag in tags%}<div class="tag_sel" onclick="addtag('{[tag]}');" id="{[tag]}">{[tag]}</div>{% endfor %}
+  </div>
+  <button style="position: fixed;top: 86%;bottom: 8%;right: 0vw;width: 10.7vw;" onclick="redire()">
+      确定
+  </button>
+  <script>
+    for(i of tags_set){
+      document.getElementById(i).style["background-color"]="lime";
+    }
+    for(i of ftags_set){
+      document.getElementById(i).style["background-color"]="gray";
+    }
+  </script>
+  <div id="container"></div>
+<script>
+ var cparent=document.getElementById("container");
+ for(var i=0;(i<20)&&(gonelen<imgData.data.length);i++,gonelen++){
+  if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a  href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
+ }
+</script>
+  <script>
+    //Loading页面
+document.onreadystatechange=function () {
+          if (document.readyState=="complete"){
+               loadingFade();
+          }
+}
+function loadingFade() {
+     var opacity=1;
+     //var loadingPage=document.getElementById('loading');
+     var loadingBackground=document.getElementById('loading_bg');
+     var time=setInterval(function () {
+          if (opacity<=0){
+               clearInterval(time);
+               //loadingPage.remove();
+               $('#loading').remove();
+          }
+
+          loadingBackground.style.opacity=opacity;
+          opacity-=0.4;
+     },100);
+}
+
+  </script>
+  <script>
+  </script>
+ </body>
+</html>

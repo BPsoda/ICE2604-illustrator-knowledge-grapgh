@@ -1,3 +1,4 @@
+
 from elasticsearch import Elasticsearch
 import json
 
@@ -22,11 +23,12 @@ class Searcher:
             return result['hits']['hits']
         elif method in ['userId', 'userName']:
             result = self.es.search(index='users_index', body=searchQuery)
+            return result['hits']['hits']
         else:
             print('No match result!')
             return None
 
-# if __name__ == '__main__':
-#     se = Searcher()
-#     result = se.search(22646094, 'id')
-#     print(json.dumps(result[0], indent=2, separators=(',', ';')))
+if __name__ == '__main__':
+    se = Searcher()
+    result = se.search('Novelance', 'userName')
+    print(json.dumps(result[0], indent=2, separators=(',', ';')))

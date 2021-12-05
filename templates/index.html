@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8' />
+        <title>ECharts</title>
+        <script src="/static/echarts.js"></script>
+        <script src="/static/jquery.js"></script>
+        <link href="static/example.css" rel="stylesheet">
+        <link href="headers.css" rel="stylesheet">
+        <link rel="stylesheet" href="static/sidebars.css">
+        <!-- drag -->
+        <script src="static/drag.js"></script>
+    </head>
+    <header class="p-3 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+          <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftva3.sinaimg.cn%2Flarge%2F006yt1Omly1g9lr654eufj314a18ghdt.jpg&refer=http%3A%2F%2Ftva3.sinaimg.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640417813&t=46452ea5d6c1fb234cb50db394caf3cc" class="bi me-2" width="60" height="48" role="img"></img>
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a href="home" class="nav-link px-2 text-white">Home</a></li>
+          <li><a href="static" class="nav-link px-2 text-white">static</a></li>
+          <li><a href="picture" class="nav-link px-2 text-white">Pictures</a></li>
+          <li><a href="tags" class="nav-link px-2 text-white">Tags</a></li>
+          <li><a href="search" class="nav-link px-2 text-white">Search</a></li>
+
+        </ul>
+      </div>
+    </div>
+  </header>
+<body>
+    
+    <div id="main1" style="width: 49%;height: 600px;float:left;border: 1px solid #eee;"></div>
+    <div id="main3" style="width: 49%;height: 600px;float:left;border: 1px solid #eee;"></div>
+    <div id="main2" style="width: 49%;height: 700px;float:left;border: 1px solid #eee;"></div>
+    <script type="text/javascript">
+        var mychart =echarts.init(document.getElementById('main1'),'dark');
+        var mychart1 =echarts.init(document.getElementById('main2'),'dark');
+        var mychart2 =echarts.init(document.getElementById('main3'),'dark');
+        $.getJSON('/data').done(function(data){
+        mychart.setOption({
+        color: [ '#00DDFF'],
+        title:{
+        text: 'Top6 Tags',
+        x:'center',
+        top:'20',
+        textStyle: {
+        "fontSize": 24
+        },
+        },
+        tooltip:{},
+        legend:{
+            data:["作品数"],
+            textStyle: {
+            "fontSize": 16
+        },
+        x:'right',
+        },
+       yAxis:{
+            type : 'category',
+            data:data.categories,
+            
+            axisLabel: {
+                show: true,
+                textStyle: {
+                    color: '#FFFFFF',
+                },
+                fontSize: 12.5,
+                interval:0,  
+                rotate:40  
+ 
+            },
+            
+        },
+
+        xAxis:{ axisLabel: {
+                show: true,
+                textStyle: {
+                    color: '#FFFFFF',
+                },
+                fontSize: 12.5,
+            },},
+        series:[
+            {
+                name:'作品数',
+                type:'bar',
+                data:data.data,
+                
+            }
+        ]
+        });
+
+        
+        });
+
+    
+    mychart1.setOption({
+    color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00','#61a0a8'],
+    title: {
+        text: 'Tags的作品数趋势'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+        type: 'cross',
+        label: {
+            backgroundColor: '#6a7985'
+        }
+        }
+    },
+    legend: {
+        data: ['オリジナル', '女の子', 'R-18', 'おっぱい', '巨乳','原神']
+    },
+    toolbox: {
+        feature: {
+        saveAsImage: {}
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: [
+        {
+        type: 'category',
+        boundaryGap: false,
+        data: ['2015', '2016', '2017', '2018', '2019', '2020', '2021']
+        }
+    ],
+    yAxis: [
+        {
+        type: 'value'
+        }
+    ],
+    series: [
+        {
+        name: 'オリジナル',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+            width: 0
+        },
+        showSymbol: false,
+        areaStyle: {
+            opacity: 0.8,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgba(128, 255, 165)'
+            },
+            {
+                offset: 1,
+                color: 'rgba(1, 191, 236)'
+            }
+            ])
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [51,74,147,199,395,667,3125]
+        },
+        {
+        name: '女の子',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+            width: 0
+        },
+        showSymbol: false,
+        areaStyle: {
+            opacity: 0.8,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgba(0, 221, 255)'
+            },
+            {
+                offset: 1,
+                color: 'rgba(77, 119, 255)'
+            }
+            ])
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [24,54,80,126,219,438,2063]
+        },
+        {
+        name: 'R-18',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+            width: 0
+        },
+        showSymbol: false,
+        areaStyle: {
+            opacity: 0.8,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgba(55, 162, 255)'
+            },
+            {
+                offset: 1,
+                color: 'rgba(116, 21, 219)'
+            }
+            ])
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [23,46,61,101,192,372,2054,]
+        },
+        {
+        name: 'おっぱい',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+            width: 0
+        },
+        showSymbol: false,
+        areaStyle: {
+            opacity: 0.8,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgba(255, 0, 135)'
+            },
+            {
+                offset: 1,
+                color: 'rgba(135, 0, 157)'
+            }
+            ])
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [7,9,28,42,74,164,943]
+        },
+        {
+        name: '巨乳',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+            width: 0
+        },
+        showSymbol: false,
+        label: {
+            show: true,
+            position: 'top'
+        },
+        areaStyle: {
+            opacity: 0.8,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgba(255, 191, 0)'
+            },
+            {
+                offset: 1,
+                color: 'rgba(224, 62, 76)'
+            }
+            ])
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [9,7,10,33,66,119,840]
+        },
+        {
+        name: '原神',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+            width: 0
+        },
+        showSymbol: false,
+        label: {
+            show: true,
+            position: 'top'
+        },
+        areaStyle: {
+            opacity: 0.8,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgba(255, 131, 0)'
+            },
+            {
+                offset: 1,
+                color: 'rgba(124, 62, 76)'
+            }
+            ])
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [0,0,0,0,0,46,653]
+        }
+        ]
+            });
+            
+        mychart2.setOption({
+
+        title:{
+        text: 'Top6 Painters',
+        x:'center',
+        top:'20',
+        textStyle: {
+        "fontSize": 24
+        },
+        },
+        tooltip:{},
+        legend:{
+            data:["粉丝数"],
+            textStyle: {
+            "fontSize": 16
+        },
+        x:'right',
+        },
+       yAxis:{
+            data:["_LM7_", "Rella","ASK","Anmi@画集発売中","しらび", "pixiv事務局"],
+            
+            axisLabel: {
+                show: true,
+                textStyle: {
+                    color: '#FFFFFF',
+                },
+                fontSize: 12.5,
+                interval:0,  
+                rotate:40 
+            },
+            
+        },
+        xAxis:{ axisLabel: {
+                show: true,
+                textStyle: {
+                    color: '#FFFFFF',
+                },
+                fontSize: 12.5,
+            },},
+        series:[
+            {
+                name:'粉丝数',
+                type:'bar',
+                data:[2122, 2210, 2236, 2294, 2314, 2394]
+                
+            }
+        ]
+         })
+    </script>
+
+</body>
+
+</html>
