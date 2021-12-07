@@ -3,7 +3,7 @@ import pymysql
 import json
 import requests
 import json,random
-import searcher
+from ice.ICE2604_Final_Project import searcher
 import shelve
 global result
 the_tags="""[('オリジナル', 4306)
