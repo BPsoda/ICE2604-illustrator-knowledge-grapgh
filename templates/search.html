@@ -8,7 +8,7 @@
     <meta name="generator" content="Hugo 0.88.1">
     <title>Final_Project_Picture</title>
 
-   
+
 <link href="static/example.css" rel="stylesheet">
 <link href="headers.css" rel="stylesheet">
 <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/album/">
@@ -29,10 +29,40 @@
           font-size: 3.5rem;
         }
       }
+      body{
+      font-family: "Microsoft YaHei","宋体","Segoe UI", "Lucida Grande", Helvetica, Arial,sans-serif, FreeSans, Arimo;
+      }
+      div.search {padding: 30px 0;}
+      form.search {
+            position: relative;
+            width: 300px;
+            margin: 0 auto;
+        }
+      .bar1 {background: black;}
+        .bar1 input {
+            border: 2px solid #7BA7AB;
+            border-radius: 5px;
+            background: #F9F0DA;
+            color: #9E9C9C;
+        }
+        .bar1 button {
+            top: 0;
+            right: 0;
+            background: #7BA7AB;
+            border-radius: 0 5px 5px 0;
+        }
+        .bar1 button:before {
+            content: "\f002";
+            font-family: FontAwesome;
+            font-size: 16px;
+            color: #F9F0DA;
+        }
     </style>
     <script src="static/drag.js"></script>
     <script src="static/vue.js"></script>
-    
+    <script src="static/jquery.js"></script>
+    <script src="static/example.js"></script>
+
   </head>
   <body>
 <header class="p-3 bg-dark text-white">
@@ -52,11 +82,9 @@
       </div>
     </div>
   </header>
-    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" name="" method="post">
-          <input name="getinfo" type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
-        <div class="text-middle">
-          <input type="submit" class="btn btn-warning"></input>
-        </div>
+    <form class="search bar1" name="" method="post">
+          <input name="getinfo" type="search"  placeholder="Search..." aria-label="Search">
+          <button type="submit" >搜索</button>
         </form>
 <header>
   <div class="collapse bg-dark" id="navbarHeader">
@@ -64,7 +92,7 @@
       <div class="row">
         <div class="col-sm-8 col-md-7 py-4">
           <h4 class="text-white">About</h4>
-          <p class="text-muted"</p>
+          <p class="text-muted"></p>
         </div>
         <div class="col-sm-4 offset-md-1 py-4">
           <h4 class="text-white">Contact</h4>
@@ -89,29 +117,29 @@
 
 <main>
 
-  <section class="py-5 text-center container">
-    <div class="row py-lg-5">
-      <div class="col-lg-6 col-md-8 mx-auto">
-        <h1 class="fw-light">Result</h1>
-        <p class="lead text-muted">.</p>
-        <p>
-          <a href="#" class="btn btn-primary my-2">.</a>
-          <a href="#" class="btn btn-secondary my-2">.</a>
-        </p>
-      </div>
-    </div>
-  </section>
-<a>{[result]}</a>
-  <div class="album py-5 bg-light">
+<!--  <section class="py-5 text-center container">-->
+<!--    <div class="row py-lg-5">-->
+<!--      <div class="col-lg-6 col-md-8 mx-auto">-->
+<!--        <h1 class="fw-light">Result</h1>-->
+<!--        <p class="lead text-muted">.</p>-->
+<!--&lt;!&ndash;        <p>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a href="#" class="btn btn-primary my-2">.</a>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a href="#" class="btn btn-secondary my-2">.</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </p>&ndash;&gt;-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
+<!--<a>{[result]}</a>-->
+  <div class="album py-5 bg-dark">
     <div class="container">
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for i in result %}
         <div class="col">
-          <div class="card shadow-sm">
-            <svg  class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-            <img src="+{[ i['_source'][ 'illusts'] ]}">
+          <div class="card shadow-lg">
+            <svg ><img src="https://proxy-jp1.pixivel.moe/user-profile{[ i['_source'][ 'profileImageUrl'][i['_source'][ 'profileImageUrl'].find('/img/') :]]}"><text x="50%" y="50%" fill="#eceeef" dy=".3em">{[ i['_source']['userName'] ]}</text></svg>
             <div class="card-body">
-              <p class="card-text">{[ i['_id'] ]}</p>
+              <p class="card-text">id:{[ i['_source']['userId'] ]}</p>
+              <p class="card-text">{[i['_source']['userComment']]}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
@@ -138,10 +166,40 @@
     <p class="mb-0"><a href="/"></a> <a href="../getting-started/introduction/">g</a>.</p>
   </div>
 </footer>
+<script type="text/javascript">
+function searchToggle(obj, evt){
+var container = $(obj).closest('.search-wrapper');
 
+if(!container.hasClass('active')){
+ container.addClass('active');
+ evt.preventDefault();
+}
+else if(container.hasClass('active') && $(obj).closest('.input-holder').length == 0){
+ container.removeClass('active');
+ // clear input
+ container.find('.search-input').val('');
+ // clear and hide result container when we press close
+ container.find('.result-container').fadeOut(100, function(){$(this).empty();});
+}
+}
 
-    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+function submitFn(obj, evt){
+value = $(obj).find('.search-input').val().trim();
 
-      
+_html = "Yup yup! Your search text sounds like this: ";
+if(!value.length){
+_html = "Yup yup! Add some text friend :D";
+}
+else{
+_html += "<b>" + value + "</b>";
+}
+
+$(obj).find('.result-container').html('<span>' + _html + '</span>');
+$(obj).find('.result-container').fadeIn(100);
+
+evt.preventDefault();
+}
+</script>
+
   </body>
 </html>
