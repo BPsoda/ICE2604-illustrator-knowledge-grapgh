@@ -136,7 +136,7 @@
         {% for i in result %}
         <div class="col">
           <div class="card shadow-lg">
-            <svg ><img src="https://proxy-jp1.pixivel.moe/user-profile{[ i['_source'][ 'profileImageUrl'][i['_source'][ 'profileImageUrl'].find('/img/') :]]}"><text x="50%" y="50%" fill="#eceeef" dy=".3em">{[ i['_source']['userName'] ]}</text></svg>
+            <img src="https://proxy-jp1.pixivel.moe/user-profile{[ i['_source'][ 'profileImageUrl'][i['_source'][ 'profileImageUrl'].find('/img/') :]]}"><text x="50%" y="50%" fill="#eceeef" dy=".3em">{[ i['_source']['userName'] ]}</text></svg>
             <div class="card-body">
               <p class="card-text">id:{[ i['_source']['userId'] ]}</p>
               <p class="card-text">{[i['_source']['userComment']]}</p>
@@ -203,3 +203,4 @@ evt.preventDefault();
 
   </body>
 </html>
+'https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples/data-gl/asset/data/internet.graph.json';
