@@ -3,7 +3,7 @@ import pymysql
 import json
 import requests
 import json,random
-from ice.ICE2604_Final_Project import searcher
+import searcher
 import shelve
 global result
 the_tags="""[('オリジナル', 4306)
@@ -322,8 +322,10 @@ def get_data():
     }
     return json.dumps(data)
 
-@app.route('/illustrator/<user_id>')
-def profile(user_id):
+@app.route('/illustrator')
+def profile():
+    user_id = request.args.get('id').strip()
+    print(user_id)
     cursor.execute('SELECT * FROM Users WHERE userId={}'.format(user_id))
     profileInfo = cursor.fetchall()[0]
     userName = profileInfo[1]
@@ -334,7 +336,7 @@ def profile(user_id):
     follower_count = profileInfo[8]
     bg = profileInfo[9]
 
-    cursor.executemany('SELECT * FROM illusts WHERE id=%s', illusts)
+    cursor.execute('SELECT * FROM illusts WHERE id in %s', (illusts,))
     illustInfo = cursor.fetchall()
     urls = list(i[7] for i in illustInfo)
     return render_template('user_profile.html', userName=userName, bg=bg, profile_image=profile_image, urls=urls, following_count=following_count, follower_count=follower_count, userComment=userComment)
