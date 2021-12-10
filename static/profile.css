@@ -1,0 +1,11 @@
+.recent-illusts img{
+    width: 180px;
+    height: 180px;
+    margin: 15px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.profile-banner {
+    float: top;
+}
