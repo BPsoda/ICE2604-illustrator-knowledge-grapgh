@@ -260,8 +260,8 @@ def search():
         else:
             result = se.search(key, 'userName')
         print(result)
-        return render_template('search.html',result=result)
-    return render_template("search.html")
+        return render_template('search1.html',result=result)
+    return render_template("search1.html")
 @app.route('/picture')
 def showpicture():
     return render_template("showpic.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
