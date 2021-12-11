@@ -278,7 +278,7 @@ def showpicture():
     return render_template("showpic.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
 @app.route('/static')
 def showstatic():
-    return render_template("index.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
+    return render_template("Statics.html")
 @app.route('/tags')
 def mainpage():
     tags=request.args.get("tags","").strip()
