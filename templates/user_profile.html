@@ -12,6 +12,11 @@
     <link href="headers.css" rel="stylesheet">
     <link rel="stylesheet" href="static/sidebars.css">
     <link rel="stylesheet" href="static/profile.css">
+
+    <!--Echarts wordcloud-->
+    <script src="/static/echarts.js"></script>
+    <script src="/static/jquery.js"></script>
+    <script src="/static/echarts-wordcloud1.js"></script> 
 </head>
 <body>
     <div id="app">
@@ -59,7 +64,7 @@
         </div>
         <div class="profile-tags">
             <h2>Tags</h2>
-            <div class="tags-chart"></div>
+            <div id="profile-tags-chart" style="width: 600px; height: 400px;"></div>
         </div>
         <div class="recommandation">
             <h2>Recommandation</h2>
@@ -70,4 +75,39 @@
 </body>
 <script src="static/vue.js"></script>
 <script type="text/javascript" src="static/main.js"></script>
+<script>
+    var wordcloud =echarts.init(document.getElementById('profile-tags-chart'));
+    $.getJSON('/'+'{[userId]}'+'/tags.json').done(function(data){
+        console.log(data);
+        wordcloud.setOption({
+            tooltip: {},
+            series: [ {
+                type: 'wordCloud',
+                gridSize: 2,
+                sizeRange: [12, 50],
+                rotationRange: [-90, 90],
+
+                width: 300,
+                height: 300,
+                drawOutOfBound: true,
+                textStyle: {
+                    
+                        color: function () {
+                            return 'rgb(' + [
+                                Math.round(Math.random() * 160),
+                                Math.round(Math.random() * 160),
+                                Math.round(Math.random() * 160)
+                            ].join(',') + ')';
+                        
+                    },
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowColor: '#333'
+                    }
+                },
+                data:data.word,
+            }]
+        })
+    });
+</script>
 </html>
