@@ -257,22 +257,33 @@ se = searcher.Searcher()
 @app.route('/home',methods=['GET','POST'])
 def vue():
     global result
-    return render_template('final_project1.html')
+    return render_template('Home.html')
 @app.route('/a')
 def jsonpic():
     return json.dumps([urls for urls in random.sample(b["data"],20) if "master" in urls["src"]])
 @app.route('/search',methods=['GET','POST'])
 def search():
-    global result
     if (request.form):
-        key = request.form['getinfo']
-        if(key.isdigit()):
-            result = se.search(key, 'id')
-        else:
-            result = se.search(key, 'userName')
+        key = request.form['info']
+        result=[]
+        result1 = se.search(key, 'userName')
+        result2 = se.search(key, 'userId')
+        result3 = se.search(key, 'id')
+        result4 = se.search(key, 'tags')
+        result5 = se.search(key, 'title')
+        result.append(result1)
+        result.append(result2)
+        result.append(result3)
+        result.append(result4)
+        result.append(result5)
+        # if(key.isdigit()):
+        #     result = se.search(key, 'id')
+        # else:
+        #     result = se.search(key, 'userName')
+        # print(result)
         print(result)
         return render_template('search1.html',result=result)
-    return render_template("search1.html")
+    return render_template("search.html")
 @app.route('/picture')
 def showpicture():
     return render_template("showpic.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
