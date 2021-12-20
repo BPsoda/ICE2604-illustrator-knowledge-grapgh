@@ -325,6 +325,16 @@ def illust():
     the_id=request.args.get("id","13399152")
     return render_template("pic.html",url_foruse=func(d_url_foruse[the_id],the_id),title=d_title[the_id],tags=d_tags[the_id],ourl=d_url_foruse[the_id])
 
+@app.route('/<userId>/tags.json')
+def getUserTags(userId):
+    cursor.execute('SELECT tags FROM Users WHERE userId=%s', userId)
+    tagsdict = cursor.fetchone()[0]
+    data = []
+    tagsdict = eval('{' + tagsdict + '}')
+    for tag, cnt in tagsdict.items():
+        data.append({'name':tag, 'value':cnt})
+    return json.dumps(data)
+
 @app.route('/data', methods=['GET'])
 def get_data():
     data={
@@ -551,7 +561,6 @@ def get_data():
 @app.route('/illustrator')
 def profile():
     user_id = request.args.get('id').strip()
-    print(user_id)
     cursor.execute('SELECT * FROM Users WHERE userId={}'.format(user_id))
     profileInfo = cursor.fetchall()[0]
     userName = profileInfo[1]
@@ -565,7 +574,7 @@ def profile():
     cursor.execute('SELECT * FROM illusts WHERE id in %s', (illusts,))
     illustInfo = cursor.fetchall()
     urls = list(i[7] for i in illustInfo)
-    return render_template('user_profile.html', userName=userName, bg=bg, profile_image=profile_image, urls=urls, following_count=following_count, follower_count=follower_count, userComment=userComment)
+    return render_template('user_profile.html', userId=user_id, userName=userName, bg=bg, profile_image=profile_image, urls=urls, following_count=following_count, follower_count=follower_count, userComment=userComment)
 
     
 app.run(host='0.0.0.0',debug=True)
