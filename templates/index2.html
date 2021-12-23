@@ -32,7 +32,9 @@
     function imgerrorfun(x){
         var img=event.srcElement;
         img.src=x;
-        img.onerror=null;
+        img.onerror=function(){
+            event.srcElement.parentNode.parentNode.parentNode.remove();
+        };
     }
   </script>
   <style>
