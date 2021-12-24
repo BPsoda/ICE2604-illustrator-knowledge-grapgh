@@ -286,7 +286,7 @@ def search():
     return render_template("search.html")
 @app.route('/picture')
 def showpicture():
-    return render_template("showpic.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
+    return render_template("Pictures.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
 @app.route('/static')
 def showstatic():
     return render_template("Statics.html")
