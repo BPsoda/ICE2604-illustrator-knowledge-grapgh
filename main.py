@@ -565,16 +565,31 @@ def profile():
     profileInfo = cursor.fetchall()[0]
     userName = profileInfo[1]
     userComment = profileInfo[2]
-    profile_image = profileInfo[3]
+    profile_image = profileInfo[3].replace('i.pximg.net', 'proxy-jp1.pixivel.moe')
     illusts = profileInfo[4].rstrip().split(',')
     following_count = profileInfo[6]
     follower_count = profileInfo[8]
     bg = profileInfo[9]
+    feature = profileInfo[11]
 
+    # 获取最新插画信息
     cursor.execute('SELECT * FROM illusts WHERE id in %s', (illusts,))
     illustInfo = cursor.fetchall()
     urls = list(i[7] for i in illustInfo)
-    return render_template('user_profile.html', userId=user_id, userName=userName, bg=bg, profile_image=profile_image, urls=urls, following_count=following_count, follower_count=follower_count, userComment=userComment)
 
+    # 获取推荐画师信息
+    cursor.execute('SELECT userId userName profileImageUrl FROM Users \
+        WHERE feature={} \
+        ORDER BY RAND()\
+        LIMIT 10;'.format(feature))
+    recommandation = [list(il) for il in cursor.fetchall()]
+    for i in range(len(recommandation)):
+        recommandation[i][3] = recommandation[i][3].repalce('i.pximg.net', 'proxy-jp1.pixivel.moe')
+    return render_template('PersonalHomepage.html', userId=user_id, userName=userName, bg=bg, profile_image=profile_image, 
+    urls=urls, following_count=following_count, follower_count=follower_count, userComment=userComment, recommandation=recommandation)
+
+@app.route('/temp')
+def tempView():
+    return render_template('PersonalHomepage.html')
     
 app.run(host='0.0.0.0',debug=True)
