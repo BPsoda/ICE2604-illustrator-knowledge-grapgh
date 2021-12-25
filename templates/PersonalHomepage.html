@@ -13,8 +13,9 @@
     <script class="u-script" type="text/javascript" src="/static/nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 4.1.0, nicepage.com">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
-    
-    
+    <script type="text/javascript" src="/static/echarts.js"></script>
+    <script type="text/javascript" src="/static/echarts-wordcloud1.js"></script>
+    <script type="text/javascript" src="/static/jquery.js"></script>
     
     
     
@@ -89,7 +90,7 @@
           <div class="u-carousel-inner" role="listbox">
             <div class="u-active u-carousel-item u-container-style u-slide">
               <div class="u-container-layout u-container-layout-1">
-                <div alt="" class="u-image u-image-circle u-image-1" data-image-width="1280" data-image-height="716"></div>
+                <div alt="" class="u-image u-image-circle u-image-1" data-image-width="1280" data-image-height="716" style="background-image: url('{[profile_image]}')"></div>
                 <div class="fr-view u-clearfix u-rich-text u-text u-text-1">
                   <h1 style="text-align: left;">
                     <span style="line-height: 2.0;">
@@ -141,10 +142,10 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
         <p class="u-text u-text-palette-1-light-1 u-text-2">Representive works of {[ userName ]}</p>
         <div class="u-gallery u-layout-grid u-lightbox u-show-text-on-hover u-gallery-1">
           <div class="u-gallery-inner u-gallery-inner-1">
-            {% for im in urls %}
-            <div class="u-effect-fade u-gallery-item" data-href="Home.html" data-page-id="75695406">
+            {% for im in illustInfo %}
+            <div class="u-effect-fade u-gallery-item" data-href="/illust?id={[ im[0] ]}" data-page-id="75695406">
               <div class="u-back-slide">
-                <img class="u-back-image u-expanded" src="{[ im ]} ">
+                <img class="u-back-image u-expanded" src="{[ im[1] ]} ">
               </div>
               <div class="u-align-center u-over-slide u-shading u-over-slide-1">
                 <h3 class="u-gallery-heading" style="margin-right: auto; margin-left: auto; width: 329px;"></h3>
@@ -165,7 +166,7 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
             {%for illustrator in recommandation%}
             <div class="u-container-style u-list-item u-repeater-item">
               <div class="u-container-layout u-similar-container u-container-layout-1">
-                <a href="/illustraor?id={[ illustrator[0] ]}">
+                <a href="/illustrator?id={[ illustrator[0] ]}">
                   <img class="u-expanded-width u-image u-image-circle u-preserve-proportions u-image-1" src="{[ illustrator[2] ]}" alt="" data-image-width="1080" data-image-height="1080" data-href="Home.html" data-page-id="75695406">
                   <p>{[ illustrator[1] ]}</p>
                 </a>
@@ -222,7 +223,7 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
           </a>
         </div>
 
-        <script async>
+        <script>
           var wordcloud =echarts.init(document.getElementById('profile-tags-chart'));
           $.getJSON('/'+'{[userId]}'+'/tags.json').done(function(data){
               console.log(data);
@@ -252,7 +253,7 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
                               shadowColor: '#333'
                           }
                       },
-                      data:data.word,
+                      data:data,
                   }]
               })
           });

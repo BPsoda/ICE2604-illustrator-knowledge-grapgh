@@ -573,20 +573,19 @@ def profile():
     feature = profileInfo[11]
 
     # 获取最新插画信息
-    cursor.execute('SELECT * FROM illusts WHERE id in %s', (illusts,))
+    cursor.execute('SELECT id, url_foruse FROM illusts WHERE id in %s', (illusts,))
     illustInfo = cursor.fetchall()
-    urls = list(i[7] for i in illustInfo)
 
     # 获取推荐画师信息
-    cursor.execute('SELECT userId userName profileImageUrl FROM Users \
-        WHERE feature={} \
+    cursor.execute('SELECT userId, userName, profileImageUrl FROM Users \
+        WHERE feature={} and userId!={} \
         ORDER BY RAND()\
-        LIMIT 10;'.format(feature))
+        LIMIT 9;'.format(feature, user_id))
     recommandation = [list(il) for il in cursor.fetchall()]
     for i in range(len(recommandation)):
-        recommandation[i][3] = recommandation[i][3].repalce('i.pximg.net', 'proxy-jp1.pixivel.moe')
+        recommandation[i][2] = recommandation[i][2].replace('i.pximg.net', 'proxy-jp1.pixivel.moe')
     return render_template('PersonalHomepage.html', userId=user_id, userName=userName, bg=bg, profile_image=profile_image, 
-    urls=urls, following_count=following_count, follower_count=follower_count, userComment=userComment, recommandation=recommandation)
+    illustInfo=illustInfo, following_count=following_count, follower_count=follower_count, userComment=userComment, recommandation=recommandation)
 
 @app.route('/temp')
 def tempView():

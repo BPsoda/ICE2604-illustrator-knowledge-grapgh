@@ -78,7 +78,6 @@
 .u-section-2 .u-image-1 {
   width: 280px;
   height: 280px;
-  background-image: url("{[profile_image]}");
   background-position: 50% 50%;
   margin: 0 auto 0 0;
 }
@@ -315,7 +314,8 @@
 }
 
 .u-section-4 .u-image-1 {
-  height: auto;
+  height: 250px;
+  width: 250px;
   margin-top: 0;
   margin-bottom: 0;
 }
