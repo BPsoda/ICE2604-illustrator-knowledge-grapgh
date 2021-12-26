@@ -284,9 +284,9 @@ def search():
         print(result)
         return render_template('search1.html',result=result)
     return render_template("search.html")
-@app.route('/picture')
+@app.route('/map')
 def showpicture():
-    return render_template("Pictures.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
+    return render_template("out2.html",initli=[urls["src"] for urls in random.sample(b["data"],20) if "master" in urls["src"]])
 @app.route('/static')
 def showstatic():
     return render_template("Statics.html")

@@ -19,9 +19,20 @@
   padding: 30px 60px;
 }
 
+.u-section-1 .u-shape-1 {
+  width: 229px;
+  height: 37px;
+  background-image: none;
+  margin: 265px auto 0 0;
+}
+
 .u-section-1 .u-text-1 {
-  position: relative;
-  margin: 108px 20px 0;
+  font-size: 6rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: 6px 6px 0px rgba(0,0,0,0.25);
+  animation-duration: 1000ms;
+  margin: -10px 532px 0 0;
 }
 
 @media (max-width: 1199px) {

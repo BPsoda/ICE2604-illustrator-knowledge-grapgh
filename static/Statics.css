@@ -1,15 +1,23 @@
  .u-section-1 {
   background-image: linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url("images/2096eeded7c1c9ee9547c4415ceb1093b31b705e2f514bdb7b0f920f73de8911c3715f778435a8e4f6637d746b852df049aeaedd131814a9ce18d5_1280.jpg");
 }
-
+.u-section-1 .u-shape-1 {
+  width: 229px;
+  height: 37px;
+  background-image: none;
+  margin: 265px auto 0 0;
+}
 .u-section-1 .u-sheet-1 {
   min-height: 800px;
 }
 
 .u-section-1 .u-text-1 {
+  font-size: 6rem;
+  text-transform: uppercase;
   font-weight: 700;
-  font-size: 4.5rem;
-  margin: 140px 283px 0 310px;
+  text-shadow: 6px 6px 0px rgba(0,0,0,0.25);
+  animation-duration: 1000ms;
+  margin: -10px 532px 0 0;
 }
 
 .u-section-1 .u-text-2 {
