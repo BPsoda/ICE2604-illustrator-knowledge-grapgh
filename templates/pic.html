@@ -20,8 +20,8 @@
           .uSer{
             background-color: white;
             position: absolute;
-            top: 15%;
-            bottom: 35%;
+            top: 17%;
+            /* bottom: 35%; */
             left: 2.6%;
             width: 15%;
             border: 1px solid #ccc;
@@ -1200,8 +1200,11 @@
         </div>
         <div class="dianjiao"></div>
         <a class="uSer" style="position: fixed;" href="/illustrator?id={[sb__id]}">
-          <img class="u-image u-image-circle u-image-1" src="{[profile_image]}" style="width: 50%;">
-          <div style="display: -webkit-box;
+          <div style="width: 100%;display: flex;">
+          <img class="u-image u-image-circle u-image-1" src="{[profile_image]}" style="width: 50%;margin-left: 5%;margin-top: 5%;">
+          <h5 style="top: 20px;margin-left: 10%;">{[userName]}</h5>
+        </div><hr>
+          <div style="display: -webkit-box;margin-left: 10%;margin-right: 10%;margin-bottom: 10%;
           display: -moz-box;
           white-space: pre-wrap;
           word-wrap: break-word;
