@@ -240,6 +240,7 @@ try:
     cursor = conn.cursor()
 except:
     print('Fail to connect to the database.')
+    exit()
 
 def func(x:str,the_id:str):
     if "master" in x:
@@ -323,6 +324,7 @@ def mainpage():
 @app.route("/illust")
 def illust():
     the_id=request.args.get("id","13399152")
+    conn.ping(reconnect=True)
     cursor.execute("SELECT userId from illusts where id=%s",the_id)
     user_id=cursor.fetchone()[0]
     cursor.execute('SELECT * FROM Users WHERE userId={}'.format(user_id))
@@ -339,6 +341,7 @@ def illust():
 
 @app.route('/<userId>/tags.json')
 def getUserTags(userId):
+    conn.ping(reconnect=True)
     cursor.execute('SELECT tags FROM Users WHERE userId=%s', userId)
     tagsdict = cursor.fetchone()[0]
     data = []
@@ -572,6 +575,7 @@ def get_data():
 
 @app.route('/illustrator')
 def profile():
+    conn.ping(reconnect=True)
     user_id = request.args.get('id').strip()
     cursor.execute('SELECT * FROM Users WHERE userId={}'.format(user_id))
     profileInfo = cursor.fetchall()[0]

@@ -354,31 +354,5 @@ function check_bottom(){
   if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
  }
 </script>
-  <script>
-    //Loading页面
-document.onreadystatechange=function () {
-          if (document.readyState=="complete"){
-               loadingFade();
-          }
-}
-function loadingFade() {
-     var opacity=1;
-     //var loadingPage=document.getElementById('loading');
-     var loadingBackground=document.getElementById('loading_bg');
-     var time=setInterval(function () {
-          if (opacity<=0){
-               clearInterval(time);
-               //loadingPage.remove();
-               $('#loading').remove();
-          }
-
-          loadingBackground.style.opacity=opacity;
-          opacity-=0.4;
-     },100);
-}
-
-  </script>
-  <script>
-  </script>
  </body>
 </html>
