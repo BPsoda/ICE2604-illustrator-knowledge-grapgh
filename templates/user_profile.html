@@ -70,44 +70,46 @@
             <h2>Recommandation</h2>
             <div class="recommandation-d3"></div>
         </div>
+        
     </div>
-    </div>
-</body>
-<script src="static/vue.js"></script>
-<script type="text/javascript" src="static/main.js"></script>
-<script>
-    var wordcloud =echarts.init(document.getElementById('profile-tags-chart'));
-    $.getJSON('/'+'{[userId]}'+'/tags.json').done(function(data){
-        console.log(data);
-        wordcloud.setOption({
-            tooltip: {},
-            series: [ {
-                type: 'wordCloud',
-                gridSize: 2,
-                sizeRange: [12, 50],
-                rotationRange: [-90, 90],
-
-                width: 300,
-                height: 300,
-                drawOutOfBound: true,
-                textStyle: {
-                    
-                        color: function () {
-                            return 'rgb(' + [
-                                Math.round(Math.random() * 160),
-                                Math.round(Math.random() * 160),
-                                Math.round(Math.random() * 160)
-                            ].join(',') + ')';
+    <script>
+        var wordcloud =echarts.init(document.getElementById('profile-tags-chart'));
+        $.getJSON('/'+'{[userId]}'+'/tags.json').done(function(data){
+            console.log(data);
+            wordcloud.setOption({
+                tooltip: {},
+                series: [ {
+                    type: 'wordCloud',
+                    gridSize: 2,
+                    sizeRange: [12, 50],
+                    rotationRange: [-90, 90],
+    
+                    width: 300,
+                    height: 300,
+                    drawOutOfBound: true,
+                    textStyle: {
                         
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
                     },
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowColor: '#333'
-                    }
-                },
-                data:data.word,
-            }]
-        })
-    });
-</script>
+                    data:data.word,
+                }]
+            })
+        });
+    </script>
+    
+    </div>
+<script type="text/javascript" src="static/main.js"></script>
+
+</body>
 </html>

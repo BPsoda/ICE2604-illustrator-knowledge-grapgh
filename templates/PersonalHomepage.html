@@ -6,15 +6,16 @@
     <meta name="keywords" content="Illustration &amp;amp; Art Guide">
     <meta name="description" content="">
     <meta name="page_type" content="np-template-header-footer-from-plugin">
-    <title>Pictures</title>
-    <link rel="stylesheet" href="nicepage.css" media="screen">
-<link rel="stylesheet" href="Pictures.css" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <title>Illustrator</title>
+    <link rel="stylesheet" href="/static/nicepage.css" media="screen">
+    <link rel="stylesheet" href="/static/PersonalHonepage.css" media="screen">
+    <script class="u-script" type="text/javascript" src="/static/jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="/static/nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 4.1.0, nicepage.com">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
-    
-    
+    <script type="text/javascript" src="/static/echarts.js"></script>
+    <script type="text/javascript" src="/static/echarts-wordcloud1.js"></script>
+    <script type="text/javascript" src="/static/jquery.js"></script>
     
     
     
@@ -31,7 +32,7 @@
   </head>
   <body class="u-body u-overlap"><header class="u-align-center-xs u-border-1 u-border-grey-25 u-clearfix u-header u-header" id="sec-d1d3"><div class="u-clearfix u-sheet u-sheet-1">
         <a href="https://nicepage.com" class="u-image u-logo u-image-1" data-image-width="1080" data-image-height="1080">
-          <img src="images/e1480079-83f8-6e77-e4f6-3ec006fc0d60.jpg" class="u-logo-image u-logo-image-1">
+          <img src="/static/images/e1480079-83f8-6e77-e4f6-3ec006fc0d60.jpg" class="u-logo-image u-logo-image-1">
         </a>
         <form action="#" method="get" class="u-border-1 u-border-grey-15 u-search u-search-right u-search-1">
           <button class="u-search-button" type="submit">
@@ -79,6 +80,7 @@
         <h1 class="u-text u-text-palette-5-light-2 u-title u-text-1">Personal Homepage</h1>
       </div>
     </section>
+    <!--画师信息概览-->
     <section class="u-align-center u-clearfix u-section-2" id="sec-d21c">
       <div class="u-clearfix u-sheet u-sheet-1">
         <div id="carousel-5989" data-interval="5000" data-u-ride="carousel" class="u-carousel u-expanded-width-sm u-expanded-width-xs u-slider u-slider-1">
@@ -88,16 +90,16 @@
           <div class="u-carousel-inner" role="listbox">
             <div class="u-active u-carousel-item u-container-style u-slide">
               <div class="u-container-layout u-container-layout-1">
-                <div alt="" class="u-image u-image-circle u-image-1" data-image-width="1280" data-image-height="716"></div>
+                <div alt="" class="u-image u-image-circle u-image-1" data-image-width="1280" data-image-height="716" style="background-image: url('{[profile_image]}')"></div>
                 <div class="fr-view u-clearfix u-rich-text u-text u-text-1">
                   <h1 style="text-align: left;">
                     <span style="line-height: 2.0;">
-                      <span class="u-text-palette-1-base">Sample Headline</span>
+                      <span class="u-text-palette-1-base">{[userName]}</span>
                     </span>
                   </h1>
                   <p style="text-align: left;">
                     <span style="line-height: 2.0;">
-                      <span class="u-text-palette-1-base">Sample text. Click to select the text box. Click again or double click to start editing the text. Dictum non consectetur a erat nam at. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Tellus mauris a diam maecenas sed enim ut sem. Ipsum faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Pretium nibh ipsum consequat nisl vel pretium. In eu mi bibendum neque egestas congue. Vitae ultricies leo integer malesuada nunc. Nibh praesent tristique magna sit amet purus gravida. Diam volutpat commodo sed egestas. Gravida dictum fusce ut placerat orci nulla pellentesque.</span>
+                      <span class="u-text-palette-1-base">{[userComment]}</span>
                     </span>
                   </p>
                 </div>
@@ -131,89 +133,62 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
         </div>
       </div>
     </section>
+    <!--插画展示-->
     <section class="u-align-center u-clearfix u-image u-section-3" id="sec-c750" data-image-width="1980" data-image-height="1320">
       <div class="u-clearfix u-sheet u-sheet-1">
         <h2 class="u-text u-text-1">
           <a target="_blank" hidefocus="true" href="http://www.baidu.com/link?url=SNaFVUSRH1Lo73cb4jW4GYxBS05tzUfVy-FhRkfzRx-4GQgdemwYbBetZEpFzHUtXYA_ou9ed1Gl4G9qphBF2jn9v1hXZ7NDsK9GKvkXFz1GHtko6iZ2cc6yPqgToT8e" class="u-active-none u-border-none u-btn u-button-style u-hover-none u-none u-text-palette-1-base u-btn-1"> Representative works</a>
         </h2>
-        <p class="u-text u-text-palette-1-light-1 u-text-2">These are the representive works of this author</p>
+        <p class="u-text u-text-palette-1-light-1 u-text-2">Representive works of {[ userName ]}</p>
         <div class="u-gallery u-layout-grid u-lightbox u-show-text-on-hover u-gallery-1">
           <div class="u-gallery-inner u-gallery-inner-1">
-            <div class="u-effect-fade u-gallery-item" data-href="Home.html" data-page-id="75695406">
+            {% for im in illustInfo %}
+            <div class="u-effect-fade u-gallery-item" data-href="/illust?id={[ im[0] ]}" data-page-id="75695406">
               <div class="u-back-slide">
-                <img class="u-back-image u-expanded" src="images/1.svg">
+                <img class="u-back-image u-expanded" src="{[ im[1] ]} ">
               </div>
               <div class="u-align-center u-over-slide u-shading u-over-slide-1">
                 <h3 class="u-gallery-heading" style="margin-right: auto; margin-left: auto; width: 329px;"></h3>
                 <p class="u-gallery-text" style="margin-right: auto; margin-left: auto; width: 329px;"></p>
               </div>
             </div>
-            <div class="u-effect-fade u-gallery-item" data-href="Home.html" data-page-id="75695406">
-              <div class="u-back-slide">
-                <img class="u-back-image u-expanded" src="images/1.svg">
-              </div>
-              <div class="u-align-center u-over-slide u-shading u-over-slide-2">
-                <h3 class="u-gallery-heading" style="margin-right: auto; margin-left: auto; width: 329px;"></h3>
-                <p class="u-gallery-text" style="margin-right: auto; margin-left: auto; width: 329px;"></p>
-              </div>
-            </div>
-            <div class="u-effect-fade u-gallery-item" data-href="Home.html" data-page-id="75695406">
-              <div class="u-back-slide">
-                <img class="u-back-image u-expanded" src="images/1.svg">
-              </div>
-              <div class="u-align-center u-over-slide u-shading u-over-slide-3">
-                <h3 class="u-gallery-heading" style="margin-right: auto; margin-left: auto; width: 329px;"></h3>
-                <p class="u-gallery-text" style="margin-right: auto; margin-left: auto; width: 329px;"></p>
-              </div>
-            </div>
-            <div class="u-effect-fade u-gallery-item" data-href="Home.html" data-page-id="75695406">
-              <div class="u-back-slide">
-                <img class="u-back-image u-expanded" src="images/default-image.jpg">
-              </div>
-              <div class="u-align-center u-over-slide u-shading u-over-slide-4">
-                <h3 class="u-gallery-heading" style="margin-right: auto; margin-left: auto; width: 329px;"></h3>
-                <p class="u-gallery-text" style="margin-right: auto; margin-left: auto; width: 329px;"></p>
-              </div>
-            </div>
+            {%endfor%}
           </div>
         </div>
       </div>
     </section>
+    <!--相似画师推荐-->
     <section class="u-align-center u-clearfix u-image u-section-4" id="sec-8a39" data-image-width="1980" data-image-height="1320">
       <div class="u-clearfix u-sheet u-sheet-1">
-        <h2 class="u-text u-text-default u-text-1">Followering</h2>
+        <h2 class="u-text u-text-default u-text-1">Similar Illustrators</h2>
         <div class="u-list u-list-1">
           <div class="u-repeater u-repeater-1">
+            {%for illustrator in recommandation%}
             <div class="u-container-style u-list-item u-repeater-item">
               <div class="u-container-layout u-similar-container u-container-layout-1">
-                <img class="u-expanded-width u-image u-image-circle u-preserve-proportions u-image-1" src="images/e1480079-83f8-6e77-e4f6-3ec006fc0d60.jpg" alt="" data-image-width="1080" data-image-height="1080" data-href="Home.html" data-page-id="75695406">
+                <a href="/illustrator?id={[ illustrator[0] ]}">
+                  <img class="u-expanded-width u-image u-image-circle u-preserve-proportions u-image-1" src="{[ illustrator[2] ]}" alt="" data-image-width="1080" data-image-height="1080" data-href="Home.html" data-page-id="75695406">
+                  <p>{[ illustrator[1] ]}</p>
+                </a>
               </div>
             </div>
-            <div class="u-container-style u-list-item u-repeater-item">
-              <div class="u-container-layout u-similar-container u-container-layout-2">
-                <img class="u-expanded-width u-image u-image-circle u-preserve-proportions u-image-2" src="images/e1480079-83f8-6e77-e4f6-3ec006fc0d60.jpg" alt="" data-image-width="1080" data-image-height="1080" data-href="Home.html" data-page-id="75695406">
-              </div>
-            </div>
-            <div class="u-container-style u-list-item u-repeater-item">
-              <div class="u-container-layout u-similar-container u-container-layout-3">
-                <img class="u-expanded-width u-image u-image-circle u-preserve-proportions u-image-3" src="images/e1480079-83f8-6e77-e4f6-3ec006fc0d60.jpg" alt="" data-image-width="1080" data-image-height="1080" data-href="Home.html" data-page-id="75695406">
-              </div>
-            </div>
+            {%endfor%}
           </div>
         </div>
       </div>
     </section>
+    <!--词云图-->
     <section class="u-align-center u-clearfix u-image u-section-5" id="sec-5c68" data-image-width="1980" data-image-height="1320">
       <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
-        <h2 class="u-text u-text-default u-text-1">Sample Headline</h2>
+        <h2 class="u-text u-text-default u-text-1">Tags word cloud</h2>
         <div class="u-carousel u-expanded-width-xs u-gallery u-gallery-slider u-layout-carousel u-lightbox u-no-transition u-show-text-on-hover u-gallery-1" id="carousel-f035" data-interval="5000" data-u-ride="carousel">
           <ol class="u-absolute-hcenter u-carousel-indicators u-carousel-indicators-1">
             <li data-u-target="#carousel-f035" data-u-slide-to="0" class="u-active u-grey-70 u-shape-circle" style="width: 10px; height: 10px;"></li>
           </ol>
           <div class="u-carousel-inner u-gallery-inner" role="listbox">
             <div class="u-active u-carousel-item u-effect-fade u-gallery-item u-carousel-item-1">
-              <div class="u-back-slide">
-                <img class="u-back-image u-expanded" src="images/1.svg">
+              <div class="u-back-slide" id="profile-tags-chart">
+                
               </div>
               <div class="u-align-center u-over-slide u-shading u-valign-bottom u-over-slide-1">
                 <h3 class="u-gallery-heading">Sample Title</h3>
@@ -244,9 +219,45 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
 L278.318,225.92L106.409,54.017c-12.354-12.359-12.354-32.394,0-44.748c12.354-12.359,32.391-12.359,44.75,0l194.287,194.284
 c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,248.292z"></path></svg>
             </span>
+      </div>
           </a>
         </div>
-      </div>
+
+        <script>
+          var wordcloud =echarts.init(document.getElementById('profile-tags-chart'));
+          $.getJSON('/'+'{[userId]}'+'/tags.json').done(function(data){
+              console.log(data);
+              wordcloud.setOption({
+                  tooltip: {},
+                  series: [ {
+                      type: 'wordCloud',
+                      gridSize: 2,
+                      sizeRange: [12, 50],
+                      rotationRange: [-90, 90],
+      
+                      width: 300,
+                      height: 300,
+                      drawOutOfBound: true,
+                      textStyle: {
+                          
+                              color: function () {
+                                  return 'rgb(' + [
+                                      Math.round(Math.random() * 160),
+                                      Math.round(Math.random() * 160),
+                                      Math.round(Math.random() * 160)
+                                  ].join(',') + ')';
+                              
+                          },
+                          emphasis: {
+                              shadowBlur: 10,
+                              shadowColor: '#333'
+                          }
+                      },
+                      data:data,
+                  }]
+              })
+          });
+      </script>
     </section>
     
     
