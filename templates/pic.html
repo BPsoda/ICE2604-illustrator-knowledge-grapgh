@@ -17,6 +17,22 @@
     
     
         <style>
+          .uSer{
+            background-color: white;
+            position: absolute;
+            top: 6%;
+            bottom: 50%;
+            left: 2.6%;
+            width: 15%;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 5px;
+          }
+          .uSer:hover{
+            box-shadow: 1px 1px 10px #000;
+          }
+        </style>
+        <style>
             body{
                 background-color:rgb(171, 235, 243);
             }
@@ -1183,6 +1199,17 @@
             </div>
         </div>
         <div class="dianjiao"></div>
+        <a class="uSer" style="position: fixed;" href="/illustrator?id={[sb__id]}">
+          <img class="u-image u-image-circle u-image-1" src="{[profile_image]}" style="width: 50%;">
+          <div style="display: -webkit-box;
+          display: -moz-box;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp:9;   /*显示行数*/;">{[userComment]}</div>
+        </div>
         <script>
             function randomColor(){
                 var col="rgb(";
