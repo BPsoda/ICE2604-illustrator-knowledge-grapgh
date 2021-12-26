@@ -350,7 +350,7 @@ function check_bottom(){
   <div id="container"></div>
 <script>
  var cparent=document.getElementById("container");
- for(var i=0;(i<20)&&(gonelen<imgData.data.length);i++,gonelen++){
+ for(var i=0;(i<2)&&(gonelen<imgData.data.length);i++,gonelen++){
   if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a target='_blank' href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
  }
 </script>
