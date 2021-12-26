@@ -323,7 +323,19 @@ def mainpage():
 @app.route("/illust")
 def illust():
     the_id=request.args.get("id","13399152")
-    return render_template("pic.html",url_foruse=func(d_url_foruse[the_id],the_id),title=d_title[the_id],tags=d_tags[the_id],ourl=d_url_foruse[the_id])
+    cursor.execute("SELECT userId from illusts where id=%s",the_id)
+    user_id=cursor.fetchone()[0]
+    cursor.execute('SELECT * FROM Users WHERE userId={}'.format(user_id))
+    profileInfo = cursor.fetchall()[0]
+    userName = profileInfo[1]
+    userComment = profileInfo[2]
+    profile_image = profileInfo[3].replace('i.pximg.net', 'proxy-jp1.pixivel.moe')
+    illusts = profileInfo[4].rstrip().split(',')
+    following_count = profileInfo[6]
+    follower_count = profileInfo[8]
+    bg = profileInfo[9]
+    feature = profileInfo[11]
+    return render_template("pic.html",url_foruse=func(d_url_foruse[the_id],the_id),title=d_title[the_id],tags=d_tags[the_id],ourl=d_url_foruse[the_id],profile_image=profile_image,userComment=userComment,sb__id=user_id)
 
 @app.route('/<userId>/tags.json')
 def getUserTags(userId):
