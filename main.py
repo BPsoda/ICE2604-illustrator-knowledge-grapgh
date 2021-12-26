@@ -335,7 +335,7 @@ def illust():
     follower_count = profileInfo[8]
     bg = profileInfo[9]
     feature = profileInfo[11]
-    return render_template("pic.html",url_foruse=func(d_url_foruse[the_id],the_id),title=d_title[the_id],tags=d_tags[the_id],ourl=d_url_foruse[the_id],profile_image=profile_image,userComment=userComment,sb__id=user_id)
+    return render_template("pic.html",url_foruse=func(d_url_foruse[the_id],the_id),title=d_title[the_id],tags=d_tags[the_id],ourl=d_url_foruse[the_id],profile_image=profile_image,userComment=userComment,sb__id=user_id,userName=userName)
 
 @app.route('/<userId>/tags.json')
 def getUserTags(userId):
