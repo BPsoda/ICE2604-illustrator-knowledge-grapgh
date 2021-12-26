@@ -20,8 +20,8 @@
           .uSer{
             background-color: white;
             position: absolute;
-            top: 6%;
-            bottom: 50%;
+            top: 15%;
+            bottom: 35%;
             left: 2.6%;
             width: 15%;
             border: 1px solid #ccc;
@@ -1190,9 +1190,9 @@
               <ul class="dock" id="tags">
                 {% for tag in tags %}
                   {% if tag[0]!='#' %}
-                  <li><a href="tags?tags={[tag]}"><p>{[tag]}</p></a></li>
+                  <li style="font-size: 30px;"><a href="tags?tags={[tag]}" style="width: 100%;height: 100%;">&emsp14;&emsp14;{[tag]}&emsp14;&emsp14;</a></li>
                   {% else %}
-                  <li><p>{[tag]}</p></li>
+                  <li style="font-size: 30px;">&emsp14;&emsp14;{[tag]}&emsp14;&emsp14;</li>
                   {% endif %}
                 {% endfor %}
               </ul>
