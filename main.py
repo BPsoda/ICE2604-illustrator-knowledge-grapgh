@@ -282,7 +282,7 @@ def search():
         # else:
         #     result = se.search(key, 'userName')
         # print(result)
-        print(result)
+        # print(result)
         return render_template('search1.html',result=result)
     return render_template("search.html")
 @app.route('/map')
