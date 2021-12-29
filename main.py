@@ -258,7 +258,7 @@ se = searcher.Searcher()
 @app.route('/home',methods=['GET','POST'])
 def vue():
     global result
-    return render_template('Home.html')
+    return render_template('Home.html',lbts=[[ii+1,d_url_foruse[i],d_title[i]] for ii,i in enumerate(random.sample(d_url_foruse.keys(),5))])
 @app.route('/a')
 def jsonpic():
     return json.dumps([urls for urls in random.sample(b["data"],20) if "master" in urls["src"]])

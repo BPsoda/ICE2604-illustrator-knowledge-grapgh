@@ -90,30 +90,29 @@
       </ol>
       <div class="u-carousel-inner" role="listbox">
         <div class="u-active u-align-center u-carousel-item u-clearfix u-image u-shading u-section-2-1" src="" data-image-width="1280" data-image-height="853">
-          <div class="u-align-left u-clearfix u-sheet u-sheet-1"></div>
+          <div class="u-align-left u-clearfix u-sheet u-sheet-1">
+            <h1 class="u-text u-text-default u-title u-text-1">Sample Headline</h1>
+          </div>
         </div>
         <div class="u-align-center u-carousel-item u-clearfix u-image u-shading u-section-2-2" src="" data-image-width="256" data-image-height="256">
           <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
             <h1 class="u-text u-text-default u-title u-text-1">Sample Headline</h1>
-            <p class="u-large-text u-text u-text-variant u-text-2">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
           </div>
         </div>
         <div class="u-align-center u-carousel-item u-clearfix u-image u-shading u-section-2-3" src="" data-image-width="256" data-image-height="256">
           <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
             <h1 class="u-text u-text-default u-title u-text-1">Sample Headline</h1>
-            <p class="u-large-text u-text u-text-variant u-text-2">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
           </div>
         </div>
         <div class="u-align-center u-carousel-item u-clearfix u-image u-shading u-section-2-4" src="" data-image-width="256" data-image-height="256">
           <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
             <h1 class="u-text u-text-default u-title u-text-1">Sample Headline</h1>
-            <p class="u-large-text u-text u-text-variant u-text-2">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
           </div>
         </div>
         <div class="u-align-center u-carousel-item u-clearfix u-image u-shading u-section-2-5" src="" data-image-width="256" data-image-height="256">
           <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
             <h1 class="u-text u-text-default u-title u-text-1">Sample Headline</h1>
-            <p class="u-large-text u-text u-text-variant u-text-2">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
+            <!-- <p class="u-large-text u-text u-text-variant u-text-2">Sample text. Click to select the text box. Click again or double click to start editing the text.</p> -->
           </div>
         </div>
       </div>
@@ -135,7 +134,13 @@
     <section class="u-clearfix u-section-3" id="sec-538d">
       <div class="u-clearfix u-sheet u-sheet-1"></div>
     </section>
-    
+    <script>
+      {% for i_i_i in lbts %}
+      __i__i__=document.querySelector(".u-section-2-{[i_i_i[0]]}");
+      __i__i__.style.backgroundImage="url('{[i_i_i[1]]}')";
+      __i__i__.getElementsByClassName("u-text")[0].innerText="{[i_i_i[2]]}";
+      {% endfor %}
+    </script>
     
     <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-d664"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
         <p class="u-small-text u-text u-text-variant u-text-1">Info:This page is the homework of ICE2604<br>
