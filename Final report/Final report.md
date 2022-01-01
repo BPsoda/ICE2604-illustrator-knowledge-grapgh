@@ -5,12 +5,187 @@
 <img src="img/logo.png"></img>
 [toc]
 ## Project Design
+There are numerous awesome illustrators and delicate illustrations on the internet.But have you ever thought how they are related to each other?  
+Our project aims to find and visualizing the relationship between each illustrator and illustration, by the means of **illustrator map** and **illustration ranking & trending**.  
+### Illustrator map
+By static the tags of one illustrator's works and turn it to a vector, we can represent the style of an author as a vector. Plotting it one a graph and add following relationship as edges, we get the illustrator map.  
+<img src="img/word2vec.png"></img>
+### Ranking & Trending
+By analyze the create date, tags and bookmarks of illustration, we can point out the trending and make predictions.
+<img src="img/trending.png"></img>
 ***
 ## Our work
 ***
 ## Data and Crawler
+### Crawler  
+#### Website analysis
+The data source of our project is pixiv.net, an online community of artist.  
+The data we want include:  
+- The basic information of a illustrator
+- The following illustrators of one illustrator
+- The recent works of illustrators
+- The tags of an illustrator
+- The basic information of an illustration
+- The tags of an illustation
+
+After looking into the XHR of the website, we find these information in two responses:   
+- `https://www.pixiv.net/ajax/user/{userId}/illusts/tags?lang=zh`
+- `https://www.pixiv.net/ajax/user/{userId}/following?offset={}&limit={}&rest=show&tag=&lang=zh`
+
+The content looks like this:  
+```json
+// /ajax/user/15158551/following
+{
+	"error": false,
+	"message": "",
+	"body": {
+		"users": [
+			{
+				"userId": "15871673",
+				"userName": "ユウマ",
+				"profileImageUrl": "https://i.pximg.net/user-profile/img/2019/10/27/18/42/33/16468488_e4f111bf6b5e635c0a71caf767e8cc03_170.jpg",
+				"userComment": "...",
+				"following": false,
+				"followed": false,
+				"isBlocking": false,
+				"isMypixiv": false,
+				"illusts": [
+					{
+						"id": "95076157",
+						"title": "『生にしがみつく あまーい味がするね』",
+						"illustType": 0,
+						"xRestrict": 0,
+						"restrict": 0,
+						"sl": 4,
+						"url": "https://i.pximg.net/c/250x250_80_a2/img-master/img/2021/12/28/00/52/42/95076157_p0_square1200.jpg",
+						"description": "",
+						"tags": [
+							"創作",
+							"オリジナル"
+						],
+						"userId": "15871673",
+						"userName": "ユウマ",
+						"width": 2480,
+						"height": 3508,
+						"pageCount": 1,
+						"isBookmarkable": true,
+						"bookmarkData": null,
+						"alt": "#創作 『生にしがみつく あまーい味がするね』 - ユウマ的插画",
+						"titleCaptionTranslation": {
+							"workTitle": null,
+							"workCaption": null
+						},
+						"createDate": "2021-12-28T00:52:42+09:00",
+						"updateDate": "2021-12-28T00:52:42+09:00",
+						"isUnlisted": false,
+						"isMasked": false,
+						"profileImageUrl": "https://i.pximg.net/user-profile/img/2019/10/27/18/42/33/16468488_e4f111bf6b5e635c0a71caf767e8cc03_50.jpg"
+					},
+					...
+				],
+				"novels": [],
+				"acceptRequest": false
+			},
+			...
+		],
+		"total": 86,
+		"followUserTags": [],
+		"zoneConfig": {
+			...
+		},
+		"extraData": {
+			...
+		}
+	}
+}
+```
+```json
+// /ajax/user/15158551/illusts/tags?lang=zh
+{
+	"error": false,
+	"message": "",
+	"body": [
+		{
+			"tag": "オリジナル",
+			"tag_translation": "原创",
+			"tag_yomigana": "おりじなる",
+			"cnt": 77
+		},
+		{
+			"tag": "不思議の国のアリス",
+			"tag_translation": "爱丽丝梦游仙境",
+			"tag_yomigana": "ふしぎのくにのありす",
+			"cnt": 2
+		},
+		...
+	]
+}
+```
+
+#### Make requests
+We makes requests with the python module `requests`. Consider the anti reptile measures, we alse applied `clash` as the agent pool.  
+The pixiv has relatively loose anti reptile measures. It only checks `referrence` and `Cookie`.  
+```python
+def makeRequest(id):
+    url='https://www.pixiv.net/ajax/user/{}/following?offset=0&limit=24&rest=show&tag=&lang=zh'.format(id)
+    headers = {
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0',
+        'cookie': 'xxx',
+        'referer': 'https://www.pixiv.net/users/{}/following'.format(id),
+    }
+    proxy = '127.0.0.1:7890'
+    proxies = {
+        'http': 'http//' + proxy,
+        'https': 'https://' + proxy,
+    }
+    for retries in range(MAX_RETRIES + 1):
+        try:
+            response = requests.get(url, headers=headers, proxies=proxies).json()
+            total = response['body']['total']
+            for i in range(24, total, 24):
+                url='https://www.pixiv.net/ajax/user/{}/following?offset={}&limit=24&rest=show&tag=&lang=zh'.format(id, i)
+                partialResponse = requests.get(url, headers=headers, proxies=proxies).json()
+                for user in partialResponse['body']['users']:
+                    response['body']['users'].append(user)
+            break
+        except:
+            # retry after 3 seconds
+            if retries == 0:
+                print(': Network error. Retry in 3 seconds')
+            elif retries < MAX_RETRIES:
+                print(': Retry {} failed...'.format(retries+1))
+            else:
+                print(' exited.')
+                visitingQueque.put(id)
+                exit()
+            time.sleep(3)
+
+    visited[id] = 1
+    for user in response['body']['users']:
+        visitingQueque.put(user['userId'])
+    return response
+```
+
+#### Cawl the whole net
+After finishing one illustrator, we want the cawler to retieve information of other illustrators as well. This can be realized by crawling the following of the current illustrator.  
+The following relationship constructs a directed graph of illustrators. If we traverse the net, we can get all the information we want. So, we search the net with BFS.  
+```python
+visited = {}
+visitingQueque = queue.Queue()
+
+while(len(visited) < 10000):
+    visitingId = visitingQueque.get()
+    while (visitingId in visited) : 
+        visitingId = visitingQueque.get()
+    response = makeRequest(visitingId)
+```
+
+#### Multi-threading
+Consider the network I/O takes up most of the time, it is necessary to apply multithreading. In this case, we spawned 4 threads.  
+The `visitingQueue` can serve as the scheduler of the threads.  
+
 ### Data Sifting
-&emsp;&emsp;&emsp;&emsp;To start with, what we had was the raw infomation Hunag haoxv clawled from the Pixiv website in the form of **.json**. Which was heavily repeated and took up about 15GB memories after unzipped. 
+&emsp;&emsp;&emsp;&emsp;To start with, what we had was the raw infomation we clawled from the Pixiv website in the form of **.json**. Which was heavily repeated and took up about 15GB memories after unzipped. 
 &emsp;&emsp;&emsp;&emsp;The smallest one of them is like like this:
 ```json
 {
