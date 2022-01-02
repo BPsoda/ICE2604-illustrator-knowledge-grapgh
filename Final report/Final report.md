@@ -306,6 +306,52 @@ conn.commit()
 &emsp;&emsp;&emsp;&emsp;Also, I used ```tqdm``` to add a process bar to visualize the procedure of the program.
 ***
 ## Search Engine
+The search engine is based on Elastic Search. We aim to search illustrators and illustrations by id, name, tag.  
+Because we want the exact id, so the id is `keyword` type. The name/title and tags are text type.  
+Since the name, title and tags contain Chinese and Japanese, we tokenize them with an plugin `analysis-icu`.  
+```python
+illusts_mappings = {
+    "settings": {
+        "index": {
+            "analysis": {
+                "analyzer": {
+                    "cjk_analyzer": {
+                        "type": "custom",
+                        "tokenizer" : "icu_tokenizer"
+                    }
+                }
+            }
+        }
+    },
+    "mappings" : {
+        "properties": {
+            "id": {
+                "type": "keyword",
+            },
+            "title": {
+                "type": "text",
+                "analyzer": "cjk_analyzer"
+            },
+            "url": {
+                "type": "keyword",
+            },
+            "tags": {
+                "type": "text",
+                "analyzer": "simple"
+            },
+            "userId": {
+                "type": "keyword",
+            },
+            "createDate": {
+                "type": "keyword",
+            },
+            "bookmark_count": {
+                "type": "long",
+            }
+        }
+    }
+}
+```
 ***
 ## Visualization
 ***
@@ -403,7 +449,25 @@ for ill in tqdm(ills):
 ```
 &emsp;&emsp;&emsp;&emsp;By doing things like this, when ```source_1.png``` is not valid, the ```src``` would be changed to ```source_2.png```, and when ```source_2.png``` is still not valid, the whole **div** that contains this img would be removed. Thus, the webpage will have no broken image be shown.
 ***
+## Team cooperation
+### Source Code Management
+We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
+<img src="img/git.png"></img>
+
+### Database
+We put our data on the cloud server of Alilibaba, so every member has access to the latest data.
 ## Future work
+### Illustration Feature
+The hash function used on illustrators doesn't discriminate illustrations well.  
+<img src="img/illust_hash.png"></img>  
+Current features are all based on illustration tags, rather than illustration itself. So next step, we can apply computer vision method, 
+such as ResNet or AlexNet.
+
+### Handle Synonymous Tags
+There are many synonymous tags in our data. However, the PCA algorithm can't tell if two tags hane the same meaning. For example, following four tags all refer to the same character.  
+<img src="img/synonymous_tags.png"></img>
+NLP method should be applied to find these tags of similar meanings. For example, GloVe can construct coexistence matrix, thus find the words that most likely to have the same meaning.  
+<img src="img/glove.png"></img>
 ***
 ## Duty
 - Data and crawler: 黄川懿，薛家奇，黄浩栩
