@@ -568,6 +568,146 @@ function redire(){
     window.location.href="tags?tags="+_tags+"&ftags="+_ftags;
 }
 ```
+### The Map Page
+#### Zoom of Map
+&emsp;&emsp;&emsp;&emsp;I copied the code from [svg-pan-zoom](https://github.com/bumbu/svg-pan-zoom), so there's nothing much to talk about.
+&emsp;&emsp;&emsp;&emsp;Also, I noticed that some pages of acemap seems also used the same zoomimg method.
+|svg-pan-zoom|CCFConfCompare|
+|:-:|:-:|
+|![](img/xjq_7.png)|![](img/xjq_8.png)|
+#### Show of Map
+&emsp;&emsp;&emsp;&emsp;Because of the relations of the illustors is too complicated and many of them are followed and are following too many people. The edges of the graph is just too much. And will be hard to zoom or drag or find anything useful. My solution to this problem is to hide all the edges and only show edges that are related to the node selected.
+&emsp;&emsp;&emsp;&emsp;Thanks to the form of the output of **gephi**, each nodes has it's **id** and each nodes has it's targets in it's ```class```.
+```html
+<path class="id_10292 id_3079252" d="M -151.112381,530.487549 L -314.106415,-545.153503" fill="none" stroke="#b29b6c" stroke-opacity="0.4" stroke-width="1.0" style="display:none;"></path>
+...
+<circle class="id_2074388" cx="686.12494" cy="-1027.0114" fill="#00c7ff" fill-opacity="1.0" r="7.6373625" stroke="#000000" stroke-opacity="1.0" stroke-width="1.0"></circle>
+```
+&emsp;&emsp;&emsp;&emsp;So I could select out the edges and nodes easily using ```querySelector```.
+```js
+var masks = document.getElementById("node-labels").querySelectorAll("text");
+var masks2 = document.getElementById("nodes").querySelectorAl("circle");
+var masks3 = document.getElementById("node-labels-outline")querySelectorAll("text");
+var idnow="_";
+masks.forEach(function (elem){
+    elem.style.cursor="pointer";
+    elem.onmouseover=function(){
+        if(idnow=="_"){
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+    }
+    elem.onmouseout=function(){
+        if(idnow=="_"){
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                line.style.display="none";
+            });
+        }
+    }
+    elem.onclick=function(){
+        if(idnow=="_"){
+            idnow=elem.attributes.class.nodeValue;
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+        else if(idnow==elem.attributes.class.nodeValue){
+            idnow="_";
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                line.style.display="none";
+            });
+        }
+        else{
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(idnow)).forEach(function (line){
+                line.style.display="none";
+            });
+            idnow=elem.attributes.class.nodeValue;
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+    }
+})
+```
 ## Team cooperation
 ### Source Code Management
 We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
