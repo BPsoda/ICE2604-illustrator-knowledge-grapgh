@@ -644,6 +644,265 @@ for ill in tqdm(ills):
 &emsp;&emsp;&emsp;&emsp;By doing things like this, when ```source_1.png``` is not valid, the ```src``` would be changed to ```source_2.png```, and when ```source_2.png``` is still not valid, the whole **div** that contains this img would be removed. Thus, the webpage will have no broken image be shown.
 
 ***
+### The Tags Page
+#### Picture Part
+&emsp;&emsp;&emsp;&emsp;Since our goal is to build a website that shows pisture, it is very important to find a good way to show others the illusts. The **Waterfall** form comes to my mind.
+&emsp;&emsp;&emsp;&emsp;The **Waterfall** form is to place pictures on the page in many cols with the same width but the height is different. Probably like this:
+![](img/xjq_3.png)
+&emsp;&emsp;&emsp;&emsp;However, because of the size of the img we could get, it might be a little bit large to show so many pictures on one page. So we would just show two cols. Like this:
+![](img/xjq_4.png)
+&emsp;&emsp;&emsp;&emsp;Here's some details about the page.
+&emsp;&emsp;&emsp;&emsp;To keep the order of the pictures, I could not just do it with **css**, instead, I would have to do it with **js** and **css**. 
+&emsp;&emsp;&emsp;&emsp;First of all, constrain the width of the img with **css**. Next, define the ```checkFlag``` function to reset the pictures when the ```document``` is ```onload```. In this function, I'd have to compute the num of pictures of each column. Also, I had to reset the height of container to display the pictures seperately. 
+&emsp;&emsp;&emsp;&emsp;After doing this, the pictures is already in the form of **Waterfall**. However, the num of the pictures is fixed. What we want is the type of Waterfall that is endless. That would pour more and more pictures when the user scroll to the bottom of the page. In other word, the pictures must be loaded asynchronously. I have no idea about this so I would learn it from the beginning.
+&emsp;&emsp;&emsp;&emsp;At that time didn't know **js** well. And the first idea that comes to real is using **Ajax**, the **requests** of **js**. Here's the basic code.
+```JavaScript
+var xmlhttp;
+if (window.XMLHttpRequest){
+    xmlhttp=new XMLHttpRequest();
+}
+else{
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+xmlhttp.onreadystatechange=function(){
+    if (xmlhttp.readyState==4 &&xmlhttp.status==200){
+        imgData.data=eval(xmlhttp.responseText);
+    }
+}
+xmlhttp.open("GET","/a?t="+ Math.random(),true);
+xmlhttp.send();
+```
+&emsp;&emsp;&emsp;&emsp;This is used to get the infomation of the imgs to be added to the page. However, the images I got was repeated. And I could not fix it. Out of no reason. But I came to realize that I didn't needed to do so. All I need is to write the ```innerHTML``` of the container in the proper time. And the infomation of the pictures could be included then the **HTML** is rendered. Using ```Flask.render_templates```. Just like this:
+```js
+var imgData={
+    "data":[
+      {% for flask_ in flask_datas %}
+        {"src":"{[flask_[1]]}","id":"{[flask_[0]]}","tsrc":"{[flask_[2]]}"},
+      {% endfor %}
+    ]
+}
+```
+&emsp;&emsp;&emsp;&emsp;This woudn't cost much memery, since even a single picture is a lot larger than some simple text. So the problem comes to **when to write**.
+&emsp;&emsp;&emsp;&emsp;The answer is the time you scroll to the bottom of the page. So I defined a function named ```check_bottom``` , whitch computes the position of the scrollbar and add picture to the page.
+```js
+function check_bottom(){
+    if((document.body.scrollTop+document.body.clientHeight-document.body.scrollHeight>-document.body.clientHeight/2)&&(document.getElementById("container").lastChild.firstChild.firstChild.firstChild.complete)){
+        var cparent=document.getElementById("container");
+        for(var i=0;(i<2)&&(gonelen<imgData.data.length);i++,gonelen++){
+            if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
+        }
+    }
+}
+```
+&emsp;&emsp;&emsp;&emsp;Also, the function is used repeatly. So I need to ```var clo2=self.setInterval('check_bottom()',500);``` to call it each 500ms.
+&emsp;&emsp;&emsp;&emsp;Then comes the problem that the newly added picture is not well located. My solution is to call ```check_bottom``` every 500ms too. 
+&emsp;&emsp;&emsp;&emsp;Now the pictures could be shown nicely.
+#### Tags Part
+&emsp;&emsp;&emsp;&emsp;The item that inspired me about this part is the output of the search part of **bilibili**. 
+![](img/xjq_5.png)
+<center><img src="img/xjq_6.png" height=200px></img></center>
+
+&emsp;&emsp;&emsp;&emsp;By then I thought I've got some idea about **js**, so I decided to write it with pure **js**.
+&emsp;&emsp;&emsp;&emsp;Listing all of the tags is terrible, so the tags here will only contains tags that be used more than 50 times. 
+&emsp;&emsp;&emsp;&emsp;You will find that the cyua buttons could change it's color if you click it. That means the tags be included or forbidden when you click the "确定" button. 
+&emsp;&emsp;&emsp;&emsp;When it's cyua, it's neither selected nor forbidden. When it's lime, it's selected. When it's gray, it's forbidden.
+```js
+tags_set=new Set([{% for i in _the_tags%}"{[i]}",{% endfor %}]);
+ftags_set=new Set([{% for i in _the_ftags%}"{[i]}",{% endfor %}]);
+function addtag(tag){
+    if(tags_set.has(tag)){tags_set.delete(tag);document.getElementById(tag).style["background-color"]="gray";ftags_set.add(tag);}
+    else if(ftags_set.has(tag)){ftags_set.delete(tag);document.getElementById(tag).style["background-color"]="cyan"}
+    else{tags_set.add(tag);document.getElementById(tag).style["background-color"]="lime";}
+}
+...
+...
+    {% for tag in tags%}<div class="tag_sel" onclick="addtag('{[tag]}');" id="{[tag]}">{[tag]}</div>{% endfor %}
+...
+```
+&emsp;&emsp;&emsp;&emsp;```tags_set``` contains all lime tags, which means selected. ```ftags_set``` contains all gray tags, which means forbidden.
+&emsp;&emsp;&emsp;&emsp;And here's the relation between output and two types of tags:
+$$output=\bigcap_{i=1}^n tags\_set-\bigcup_{i=1}^m ftags\_set$$
+(Ps:The R-18 tags is forbidden by default)
+&emsp;&emsp;&emsp;&emsp;This is done with python at the server:
+```python
+tags=request.args.get("tags","").strip()
+ftags=request.args.get("ftags","").strip()
+_tags=[]
+_ftags=[]
+if not "R-18" in tags and not "R-18" in ftags:
+    ftags+=",R-18"
+if tags:
+    candi=set()
+    flag=False
+    for i in tags.split(','):
+        i=i.strip()
+        if i:
+            _tags.append(i)
+            if flag:
+                candi=candi&d_top_tags[i]
+            else:
+                candi=d_top_tags[i].copy()
+                flag=True
+else:
+    candi=d_id.copy()
+if ftags:
+    for i in ftags.split(','):
+        i=i.strip()
+        if i:
+            _ftags.append(i)
+            candi=candi-d_top_tags[i]
+ret= [[i,d_url_foruse[i],func(d_url_foruse[i],i)] for i in candi]
+```
+&emsp;&emsp;&emsp;&emsp;By the way, the "确定" button is obtained without using ```<form>```, instead, it uses ```window.location.href="...";``` like this:
+```js
+function redire(){
+    var _tags='';
+    var _ftags='';
+    for(i of tags_set)_tags+=i+',';
+    for(i of ftags_set)_ftags+=i+',';
+    window.location.href="tags?tags="+_tags+"&ftags="+_ftags;
+}
+```
+### The Map Page
+#### Zoom of Map
+&emsp;&emsp;&emsp;&emsp;I copied the code from [svg-pan-zoom](https://github.com/bumbu/svg-pan-zoom), so there's nothing much to talk about.
+&emsp;&emsp;&emsp;&emsp;Also, I noticed that some pages of acemap seems also used the same zoomimg method.
+|svg-pan-zoom|CCFConfCompare|
+|:-:|:-:|
+|![](img/xjq_7.png)|![](img/xjq_8.png)|
+#### Show of Map
+&emsp;&emsp;&emsp;&emsp;Because of the relations of the illustors is too complicated and many of them are followed and are following too many people. The edges of the graph is just too much. And will be hard to zoom or drag or find anything useful. My solution to this problem is to hide all the edges and only show edges that are related to the node selected.
+&emsp;&emsp;&emsp;&emsp;Thanks to the form of the output of **gephi**, each nodes has it's **id** and each nodes has it's targets in it's ```class```.
+```html
+<path class="id_10292 id_3079252" d="M -151.112381,530.487549 L -314.106415,-545.153503" fill="none" stroke="#b29b6c" stroke-opacity="0.4" stroke-width="1.0" style="display:none;"></path>
+...
+<circle class="id_2074388" cx="686.12494" cy="-1027.0114" fill="#00c7ff" fill-opacity="1.0" r="7.6373625" stroke="#000000" stroke-opacity="1.0" stroke-width="1.0"></circle>
+```
+&emsp;&emsp;&emsp;&emsp;So I could select out the edges and nodes easily using ```querySelector```.
+```js
+var masks = document.getElementById("node-labels").querySelectorAll("text");
+var masks2 = document.getElementById("nodes").querySelectorAl("circle");
+var masks3 = document.getElementById("node-labels-outline")querySelectorAll("text");
+var idnow="_";
+masks.forEach(function (elem){
+    elem.style.cursor="pointer";
+    elem.onmouseover=function(){
+        if(idnow=="_"){
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+    }
+    elem.onmouseout=function(){
+        if(idnow=="_"){
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                line.style.display="none";
+            });
+        }
+    }
+    elem.onclick=function(){
+        if(idnow=="_"){
+            idnow=elem.attributes.class.nodeValue;
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+        else if(idnow==elem.attributes.class.nodeValue){
+            idnow="_";
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                line.style.display="none";
+            });
+        }
+        else{
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(idnow)).forEach(function (line){
+                line.style.display="none";
+            });
+            idnow=elem.attributes.class.nodeValue;
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+    }
+})
+```
 ## Team cooperation
 ### Source Code Management
 We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
