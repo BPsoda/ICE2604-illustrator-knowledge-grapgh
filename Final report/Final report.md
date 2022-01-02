@@ -449,6 +449,61 @@ for ill in tqdm(ills):
 ```
 &emsp;&emsp;&emsp;&emsp;By doing things like this, when ```source_1.png``` is not valid, the ```src``` would be changed to ```source_2.png```, and when ```source_2.png``` is still not valid, the whole **div** that contains this img would be removed. Thus, the webpage will have no broken image be shown.
 ***
+### The Tags Page
+#### Picture Part
+&emsp;&emsp;&emsp;&emsp;Since our goal is to build a website that shows pisture, it is very important to find a good way to show others the illusts. The **Waterfall** form comes to my mind.
+&emsp;&emsp;&emsp;&emsp;The **Waterfall** form is to place pictures on the page in many cols with the same width but the height is different. Probably like this:
+![](img/xjq_3.png)
+&emsp;&emsp;&emsp;&emsp;However, because of the size of the img we could get, it might be a little bit large to show so many pictures on one page. So we would just show two cols. Like this:
+![](img/xjq_4.png)
+&emsp;&emsp;&emsp;&emsp;Here's some details about the page.
+&emsp;&emsp;&emsp;&emsp;To keep the order of the pictures, I could not just do it with **css**, instead, I would have to do it with **js** and **css**. 
+&emsp;&emsp;&emsp;&emsp;First of all, constrain the width of the img with **css**. Next, define the ```checkFlag``` function to reset the pictures when the ```document``` is ```onload```. In this function, I'd have to compute the num of pictures of each column. Also, I had to reset the height of container to display the pictures seperately. 
+&emsp;&emsp;&emsp;&emsp;After doing this, the pictures is already in the form of **Waterfall**. However, the num of the pictures is fixed. What we want is the type of Waterfall that is endless. That would pour more and more pictures when the user scroll to the bottom of the page. In other word, the pictures must be loaded asynchronously. I have no idea about this so I would learn it from the beginning.
+&emsp;&emsp;&emsp;&emsp;At that time didn't know **js** well. And the first idea that comes to real is using **Ajax**, the **requests** of **js**. Here's the basic code.
+```JavaScript
+var xmlhttp;
+if (window.XMLHttpRequest){
+    xmlhttp=new XMLHttpRequest();
+}
+else{
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+xmlhttp.onreadystatechange=function(){
+    if (xmlhttp.readyState==4 &&xmlhttp.status==200){
+        imgData.data=eval(xmlhttp.responseText);
+    }
+}
+xmlhttp.open("GET","/a?t="+ Math.random(),true);
+xmlhttp.send();
+```
+&emsp;&emsp;&emsp;&emsp;This is used to get the infomation of the imgs to be added to the page. However, the images I got was repeated. And I could not fix it. Out of no reason. But I came to realize that I didn't needed to do so. All I need is to write the ```innerHTML``` of the container in the proper time. And the infomation of the pictures could be included then the **HTML** is rendered. Using ```Flask.render_templates```. Just like this:
+```js
+var imgData={
+    "data":[
+      {% for flask_ in flask_datas %}
+        {"src":"{[flask_[1]]}","id":"{[flask_[0]]}","tsrc":"{[flask_[2]]}"},
+      {% endfor %}
+    ]
+}
+```
+&emsp;&emsp;&emsp;&emsp;This woudn't cost much memery, since even a single picture is a lot larger than some simple text. So the problem comes to **when to write**.
+&emsp;&emsp;&emsp;&emsp;The answer is the time you scroll to the bottom of the page. So I defined a function named ```check_bottom``` , whitch computes the position of the scrollbar and add picture to the page.
+```js
+function check_bottom(){
+    if((document.body.scrollTop+document.body.clientHeight-document.body.scrollHeight>-document.body.clientHeight/2)&&(document.getElementById("container").lastChild.firstChild.firstChild.firstChild.complete)){
+        var cparent=document.getElementById("container");
+        for(var i=0;(i<2)&&(gonelen<imgData.data.length);i++,gonelen++){
+            if((imgData.data[gonelen].src!="None"))cparent.innerHTML+="<a href='/illust?id="+imgData.data[gonelen].id+"'><div class='box'><div class='box_img'><img src='"+imgData.data[gonelen].tsrc+"' onerror='imgerrorfun(\""+imgData.data[gonelen].src+"\")'/></div></div></a>";
+        }
+    }
+}
+```
+&emsp;&emsp;&emsp;&emsp;Also, the function is used repeatly. So I need to ```var clo2=self.setInterval('check_bottom()',500);``` to call it each 500ms.
+&emsp;&emsp;&emsp;&emsp;Then comes the problem that the newly added picture is not well located. My solution is to call ```check_bottom``` every 500ms too. 
+&emsp;&emsp;&emsp;&emsp;Now the pictures could be shown nicely.
+#### Tags Part
+
 ## Team cooperation
 ### Source Code Management
 We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
