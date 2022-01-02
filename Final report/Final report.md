@@ -354,6 +354,200 @@ illusts_mappings = {
 ```
 ***
 ## Visualization
+### Data Charts 
+We prepared a page called "statics" to show our data size and ranking lists of some data,aiming to enrich the content of our site.
+
+It's mainly consist of 4 pictures, an authors ranking list,a tags ranking list, a development tendency chart of the tags in last 7 years and the word cloud picture of all the tags.
+
+Using the echarts,we can easily make these pictures.
+
+#### Tools Used
+```html
+<script src="/static/echarts.js"></script>
+<script src="/static/jquery.js"></script>
+<script src="/static/echarts-wordcloud1.js"></script>
+```
+The third one is used for the wordcloud picture. 
+#### Data Acquisition 
+All the data come from our crawler and database.
+
+Through two ways,we can let the charts get the data.
+##### 1. put the data in the charts(direct access)
+like this:
+```js
+series: [...
+    data: [51,74,147,199,395,667,3125]
+    ...]
+```
+##### 2. put the data in the main.cpp(Asynchronous access)
+It's more convenient to change the data througe this way.
+
+like this:
+```python
+@app.route('/data', methods=['GET'])
+def get_data():
+    data={
+    "categories":["巨乳","魅惑の谷間","Fate/GrandOrder","おっぱい" ,"女の子","オリジナル"],
+    "data":[753,  769  ,896,1184,2990,4306],
+     }
+    return json.dumps(data)
+
+```
+
+#### Layout
+The four pictures are put on the website side by side.
+```html
+
+<div id="main1" style="width: 50%;height: 600px;float:left;border: 1px solid rgb(0, 0, 0);"></div>
+<div id="main3" style="width: 50%;height: 600px;float:right;border: 1px solid rgb(0, 0, 0);"></div>
+<div id="main2" style="width: 50%;height: 700px;float:left;border: 1px solid rgb(0, 0, 0);"></div>
+<div id="main4" style="width: 50%;height: 700px;float:right;border: 1px solid rgb(0, 0, 0);"></div>
+
+```
+#### The Pictures
+##### 1. Two Normal Bar Charts.
+The Asynchronous access one is like this:
+```js
+var mychart =echarts.init(document.getElementById('main1'),'dark');
+$.getJSON('/data').done(function(data){
+    mychart.setOption({
+    color: [ '#00DDFF'],
+    title:{
+    text: 'Top6 Tags',
+    x:'center',
+    top:'20',
+    textStyle: {
+    "fontSize": 24
+    },
+    },
+    tooltip:{},
+    legend:{
+        data:["作品数"],
+        textStyle: {
+        "fontSize": 16
+    },
+    x:'right',
+    },
+   yAxis:{
+        type : 'category',
+        data:data.categories,
+        
+        axisLabel: {
+            show: true,
+            textStyle: {
+                color: '#FFFFFF',
+            },
+            fontSize: 12.5,
+            interval:0,  
+            rotate:45  
+
+        },
+        
+    },
+
+    xAxis:{ axisLabel: {
+            show: true,
+            textStyle: {
+                color: '#FFFFFF',
+            },
+            fontSize: 12.5,
+        },},
+    series:[
+        {
+            name:'作品数',
+            type:'bar',
+            data:data.data,
+            
+        }
+    ]
+    });
+
+```
+The direct access is similar, but cut
+```js
+$.getJSON('/data').done(function(data)
+```
+The two pictures look like:
+
+<img src="img/Top6 Painters.png"></img>
+
+<img src="img/Top6 Tags.png"></img>
+
+##### 2. The Tendency Chart.
+It's based on the basic bar charts but change the way to deal with the data.
+
+In the "series" section, add the "areaStyle".
+
+```js
+series: [
+            ...
+            showSymbol: false,
+            areaStyle: {
+                opacity: 0.8,
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                    offset: 0,
+                    color: 'rgba(255, 131, 0)'
+                },
+                {
+                    offset: 1,
+                    color: 'rgba(124, 62, 76)'
+                }
+                ])
+            },
+            emphasis: {
+                focus: 'series'
+            },
+            data: ...
+        ......
+        ]
+```
+It makes a picture like this, which can exhibit the tendency through years.
+
+<img src="img/Tags tendency.png"></img>
+
+It also can just focus on partial data like this.
+
+<img src="img/tags tendency1.png"></img>
+
+##### 3. The Wordcloud Chart.
+
+We used a new js file to provide the function to make the wordcloud chart.
+```js
+<script src="/static/echarts-wordcloud1.js"></script>
+```
+The chart is a little different from the bar charts, mainly the "series" part ,it used the color gradient function
+
+The different part is like this:
+```js
+    series: [ {
+    type: 'wordCloud',
+    gridSize: 2,
+    sizeRange: [12, 50],
+    rotationRange: [-90, 90],
+    width: 1000,
+    height: 1000,
+    drawOutOfBound: true,
+    textStyle: {
+        
+            color: function () {
+                return 'rgb(' + [
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160)
+                ].join(',') + ')';
+            
+        },
+        emphasis: {
+            shadowBlur: 10,
+            shadowColor: '#333'
+        }
+    },
+    data:data.word,}]
+```
+The wordcloud picture look like this:
+<img src="img/echarts.png"></img>
+
 ***
 ## Website
 ### Valid Picture 
@@ -448,6 +642,7 @@ for ill in tqdm(ills):
 </div>
 ```
 &emsp;&emsp;&emsp;&emsp;By doing things like this, when ```source_1.png``` is not valid, the ```src``` would be changed to ```source_2.png```, and when ```source_2.png``` is still not valid, the whole **div** that contains this img would be removed. Thus, the webpage will have no broken image be shown.
+
 ***
 ## Team cooperation
 ### Source Code Management
