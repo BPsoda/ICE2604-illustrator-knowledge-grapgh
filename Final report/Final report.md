@@ -440,6 +440,200 @@ illusts_mappings = {
 ```
 ***
 ## Visualization
+### Data Charts 
+We prepared a page called "statics" to show our data size and ranking lists of some data,aiming to enrich the content of our site.
+
+It's mainly consist of 4 pictures, an authors ranking list,a tags ranking list, a development tendency chart of the tags in last 7 years and the word cloud picture of all the tags.
+
+Using the echarts,we can easily make these pictures.
+
+#### Tools Used
+```html
+<script src="/static/echarts.js"></script>
+<script src="/static/jquery.js"></script>
+<script src="/static/echarts-wordcloud1.js"></script>
+```
+The third one is used for the wordcloud picture. 
+#### Data Acquisition 
+All the data come from our crawler and database.
+
+Through two ways,we can let the charts get the data.
+##### 1. put the data in the charts(direct access)
+like this:
+```js
+series: [...
+    data: [51,74,147,199,395,667,3125]
+    ...]
+```
+##### 2. put the data in the main.cpp(Asynchronous access)
+It's more convenient to change the data througe this way.
+
+like this:
+```python
+@app.route('/data', methods=['GET'])
+def get_data():
+    data={
+    "categories":["巨乳","魅惑の谷間","Fate/GrandOrder","おっぱい" ,"女の子","オリジナル"],
+    "data":[753,  769  ,896,1184,2990,4306],
+     }
+    return json.dumps(data)
+
+```
+
+#### Layout
+The four pictures are put on the website side by side.
+```html
+
+<div id="main1" style="width: 50%;height: 600px;float:left;border: 1px solid rgb(0, 0, 0);"></div>
+<div id="main3" style="width: 50%;height: 600px;float:right;border: 1px solid rgb(0, 0, 0);"></div>
+<div id="main2" style="width: 50%;height: 700px;float:left;border: 1px solid rgb(0, 0, 0);"></div>
+<div id="main4" style="width: 50%;height: 700px;float:right;border: 1px solid rgb(0, 0, 0);"></div>
+
+```
+#### The Pictures
+##### 1. Two Normal Bar Charts.
+The Asynchronous access one is like this:
+```js
+var mychart =echarts.init(document.getElementById('main1'),'dark');
+$.getJSON('/data').done(function(data){
+    mychart.setOption({
+    color: [ '#00DDFF'],
+    title:{
+    text: 'Top6 Tags',
+    x:'center',
+    top:'20',
+    textStyle: {
+    "fontSize": 24
+    },
+    },
+    tooltip:{},
+    legend:{
+        data:["作品数"],
+        textStyle: {
+        "fontSize": 16
+    },
+    x:'right',
+    },
+   yAxis:{
+        type : 'category',
+        data:data.categories,
+        
+        axisLabel: {
+            show: true,
+            textStyle: {
+                color: '#FFFFFF',
+            },
+            fontSize: 12.5,
+            interval:0,  
+            rotate:45  
+
+        },
+        
+    },
+
+    xAxis:{ axisLabel: {
+            show: true,
+            textStyle: {
+                color: '#FFFFFF',
+            },
+            fontSize: 12.5,
+        },},
+    series:[
+        {
+            name:'作品数',
+            type:'bar',
+            data:data.data,
+            
+        }
+    ]
+    });
+
+```
+The direct access is similar, but cut
+```js
+$.getJSON('/data').done(function(data)
+```
+The two pictures look like:
+
+<img src="img/Top6 Painters.png"></img>
+
+<img src="img/Top6 Tags.png"></img>
+
+##### 2. The Tendency Chart.
+It's based on the basic bar charts but change the way to deal with the data.
+
+In the "series" section, add the "areaStyle".
+
+```js
+series: [
+            ...
+            showSymbol: false,
+            areaStyle: {
+                opacity: 0.8,
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                    offset: 0,
+                    color: 'rgba(255, 131, 0)'
+                },
+                {
+                    offset: 1,
+                    color: 'rgba(124, 62, 76)'
+                }
+                ])
+            },
+            emphasis: {
+                focus: 'series'
+            },
+            data: ...
+        ......
+        ]
+```
+It makes a picture like this, which can exhibit the tendency through years.
+
+<img src="img/Tags tendency.png"></img>
+
+It also can just focus on partial data like this.
+
+<img src="img/tags tendency1.png"></img>
+
+##### 3. The Wordcloud Chart.
+
+We used a new js file to provide the function to make the wordcloud chart.
+```js
+<script src="/static/echarts-wordcloud1.js"></script>
+```
+The chart is a little different from the bar charts, mainly the "series" part ,it used the color gradient function
+
+The different part is like this:
+```js
+    series: [ {
+    type: 'wordCloud',
+    gridSize: 2,
+    sizeRange: [12, 50],
+    rotationRange: [-90, 90],
+    width: 1000,
+    height: 1000,
+    drawOutOfBound: true,
+    textStyle: {
+        
+            color: function () {
+                return 'rgb(' + [
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160)
+                ].join(',') + ')';
+            
+        },
+        emphasis: {
+            shadowBlur: 10,
+            shadowColor: '#333'
+        }
+    },
+    data:data.word,}]
+```
+The wordcloud picture look like this:
+<img src="img/echarts.png"></img>
+
 ***
 ## Website
 ### Page harmony
@@ -629,6 +823,7 @@ for ill in tqdm(ills):
 </div>
 ```
 &emsp;&emsp;&emsp;&emsp;By doing things like this, when ```source_1.png``` is not valid, the ```src``` would be changed to ```source_2.png```, and when ```source_2.png``` is still not valid, the whole **div** that contains this img would be removed. Thus, the webpage will have no broken image be shown.
+
 ***
 ### The Tags Page
 #### Picture Part
@@ -684,7 +879,211 @@ function check_bottom(){
 &emsp;&emsp;&emsp;&emsp;Then comes the problem that the newly added picture is not well located. My solution is to call ```check_bottom``` every 500ms too. 
 &emsp;&emsp;&emsp;&emsp;Now the pictures could be shown nicely.
 #### Tags Part
+&emsp;&emsp;&emsp;&emsp;The item that inspired me about this part is the output of the search part of **bilibili**. 
+![](img/xjq_5.png)
+<center><img src="img/xjq_6.png" height=200px></img></center>
 
+&emsp;&emsp;&emsp;&emsp;By then I thought I've got some idea about **js**, so I decided to write it with pure **js**.
+&emsp;&emsp;&emsp;&emsp;Listing all of the tags is terrible, so the tags here will only contains tags that be used more than 50 times. 
+&emsp;&emsp;&emsp;&emsp;You will find that the cyua buttons could change it's color if you click it. That means the tags be included or forbidden when you click the "确定" button. 
+&emsp;&emsp;&emsp;&emsp;When it's cyua, it's neither selected nor forbidden. When it's lime, it's selected. When it's gray, it's forbidden.
+```js
+tags_set=new Set([{% for i in _the_tags%}"{[i]}",{% endfor %}]);
+ftags_set=new Set([{% for i in _the_ftags%}"{[i]}",{% endfor %}]);
+function addtag(tag){
+    if(tags_set.has(tag)){tags_set.delete(tag);document.getElementById(tag).style["background-color"]="gray";ftags_set.add(tag);}
+    else if(ftags_set.has(tag)){ftags_set.delete(tag);document.getElementById(tag).style["background-color"]="cyan"}
+    else{tags_set.add(tag);document.getElementById(tag).style["background-color"]="lime";}
+}
+...
+...
+    {% for tag in tags%}<div class="tag_sel" onclick="addtag('{[tag]}');" id="{[tag]}">{[tag]}</div>{% endfor %}
+...
+```
+&emsp;&emsp;&emsp;&emsp;```tags_set``` contains all lime tags, which means selected. ```ftags_set``` contains all gray tags, which means forbidden.
+&emsp;&emsp;&emsp;&emsp;And here's the relation between output and two types of tags:
+$$output=\bigcap_{i=1}^n tags\_set-\bigcup_{i=1}^m ftags\_set$$
+(Ps:The R-18 tags is forbidden by default)
+&emsp;&emsp;&emsp;&emsp;This is done with python at the server:
+```python
+tags=request.args.get("tags","").strip()
+ftags=request.args.get("ftags","").strip()
+_tags=[]
+_ftags=[]
+if not "R-18" in tags and not "R-18" in ftags:
+    ftags+=",R-18"
+if tags:
+    candi=set()
+    flag=False
+    for i in tags.split(','):
+        i=i.strip()
+        if i:
+            _tags.append(i)
+            if flag:
+                candi=candi&d_top_tags[i]
+            else:
+                candi=d_top_tags[i].copy()
+                flag=True
+else:
+    candi=d_id.copy()
+if ftags:
+    for i in ftags.split(','):
+        i=i.strip()
+        if i:
+            _ftags.append(i)
+            candi=candi-d_top_tags[i]
+ret= [[i,d_url_foruse[i],func(d_url_foruse[i],i)] for i in candi]
+```
+&emsp;&emsp;&emsp;&emsp;By the way, the "确定" button is obtained without using ```<form>```, instead, it uses ```window.location.href="...";``` like this:
+```js
+function redire(){
+    var _tags='';
+    var _ftags='';
+    for(i of tags_set)_tags+=i+',';
+    for(i of ftags_set)_ftags+=i+',';
+    window.location.href="tags?tags="+_tags+"&ftags="+_ftags;
+}
+```
+### The Map Page
+#### Zoom of Map
+&emsp;&emsp;&emsp;&emsp;I copied the code from [svg-pan-zoom](https://github.com/bumbu/svg-pan-zoom), so there's nothing much to talk about.
+&emsp;&emsp;&emsp;&emsp;Also, I noticed that some pages of acemap seems also used the same zoomimg method.
+|svg-pan-zoom|CCFConfCompare|
+|:-:|:-:|
+|![](img/xjq_7.png)|![](img/xjq_8.png)|
+#### Show of Map
+&emsp;&emsp;&emsp;&emsp;Because of the relations of the illustors is too complicated and many of them are followed and are following too many people. The edges of the graph is just too much. And will be hard to zoom or drag or find anything useful. My solution to this problem is to hide all the edges and only show edges that are related to the node selected.
+&emsp;&emsp;&emsp;&emsp;Thanks to the form of the output of **gephi**, each nodes has it's **id** and each nodes has it's targets in it's ```class```.
+```html
+<path class="id_10292 id_3079252" d="M -151.112381,530.487549 L -314.106415,-545.153503" fill="none" stroke="#b29b6c" stroke-opacity="0.4" stroke-width="1.0" style="display:none;"></path>
+...
+<circle class="id_2074388" cx="686.12494" cy="-1027.0114" fill="#00c7ff" fill-opacity="1.0" r="7.6373625" stroke="#000000" stroke-opacity="1.0" stroke-width="1.0"></circle>
+```
+&emsp;&emsp;&emsp;&emsp;So I could select out the edges and nodes easily using ```querySelector```.
+```js
+var masks = document.getElementById("node-labels").querySelectorAll("text");
+var masks2 = document.getElementById("nodes").querySelectorAl("circle");
+var masks3 = document.getElementById("node-labels-outline")querySelectorAll("text");
+var idnow="_";
+masks.forEach(function (elem){
+    elem.style.cursor="pointer";
+    elem.onmouseover=function(){
+        if(idnow=="_"){
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+    }
+    elem.onmouseout=function(){
+        if(idnow=="_"){
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                line.style.display="none";
+            });
+        }
+    }
+    elem.onclick=function(){
+        if(idnow=="_"){
+            idnow=elem.attributes.class.nodeValue;
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+        else if(idnow==elem.attributes.class.nodeValue){
+            idnow="_";
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                line.style.display="none";
+            });
+        }
+        else{
+            masks2.forEach(function(_){
+                _.style.display="block";
+            })
+            masks.forEach(function(_){
+                _.style.display="block";
+            })
+            masks3.forEach(function(_){
+                _.style.display="block";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(idnow)).forEach(function (line){
+                line.style.display="none";
+            });
+            idnow=elem.attributes.class.nodeValue;
+            masks2.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            masks3.forEach(function(_){
+                if(_.attributes.class.nodeValue!=elem.attributes.class.nodeValue)
+                _.style.display="none";
+            })
+            Array.from(document.getElementById("edges").getElementsByClassName(elem.attributes.class.nodeValue)).forEach(function (line){
+                if(line.classList[0]==elem.attributes.class.nodeValue){
+                    document.getElementById("nodes").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    document.getElementById("node-labels-outline").getElementsByClassName(line.classList[1])[0].style.display="block";
+                    line.style.display="block";
+                }
+            });
+        }
+    }
+})
+```
 ## Team cooperation
 ### Source Code Management
 We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
