@@ -503,7 +503,71 @@ function check_bottom(){
 &emsp;&emsp;&emsp;&emsp;Then comes the problem that the newly added picture is not well located. My solution is to call ```check_bottom``` every 500ms too. 
 &emsp;&emsp;&emsp;&emsp;Now the pictures could be shown nicely.
 #### Tags Part
+&emsp;&emsp;&emsp;&emsp;The item that inspired me about this part is the output of the search part of **bilibili**. 
+![](img/xjq_5.png)
+<center><img src="img/xjq_6.png" height=200px></img></center>
 
+&emsp;&emsp;&emsp;&emsp;By then I thought I've got some idea about **js**, so I decided to write it with pure **js**.
+&emsp;&emsp;&emsp;&emsp;Listing all of the tags is terrible, so the tags here will only contains tags that be used more than 50 times. 
+&emsp;&emsp;&emsp;&emsp;You will find that the cyua buttons could change it's color if you click it. That means the tags be included or forbidden when you click the "确定" button. 
+&emsp;&emsp;&emsp;&emsp;When it's cyua, it's neither selected nor forbidden. When it's lime, it's selected. When it's gray, it's forbidden.
+```js
+tags_set=new Set([{% for i in _the_tags%}"{[i]}",{% endfor %}]);
+ftags_set=new Set([{% for i in _the_ftags%}"{[i]}",{% endfor %}]);
+function addtag(tag){
+    if(tags_set.has(tag)){tags_set.delete(tag);document.getElementById(tag).style["background-color"]="gray";ftags_set.add(tag);}
+    else if(ftags_set.has(tag)){ftags_set.delete(tag);document.getElementById(tag).style["background-color"]="cyan"}
+    else{tags_set.add(tag);document.getElementById(tag).style["background-color"]="lime";}
+}
+...
+...
+    {% for tag in tags%}<div class="tag_sel" onclick="addtag('{[tag]}');" id="{[tag]}">{[tag]}</div>{% endfor %}
+...
+```
+&emsp;&emsp;&emsp;&emsp;```tags_set``` contains all lime tags, which means selected. ```ftags_set``` contains all gray tags, which means forbidden.
+&emsp;&emsp;&emsp;&emsp;And here's the relation between output and two types of tags:
+$$output=\bigcap_{i=1}^n tags\_set-\bigcup_{i=1}^m ftags\_set$$
+(Ps:The R-18 tags is forbidden by default)
+&emsp;&emsp;&emsp;&emsp;This is done with python at the server:
+```python
+tags=request.args.get("tags","").strip()
+ftags=request.args.get("ftags","").strip()
+_tags=[]
+_ftags=[]
+if not "R-18" in tags and not "R-18" in ftags:
+    ftags+=",R-18"
+if tags:
+    candi=set()
+    flag=False
+    for i in tags.split(','):
+        i=i.strip()
+        if i:
+            _tags.append(i)
+            if flag:
+                candi=candi&d_top_tags[i]
+            else:
+                candi=d_top_tags[i].copy()
+                flag=True
+else:
+    candi=d_id.copy()
+if ftags:
+    for i in ftags.split(','):
+        i=i.strip()
+        if i:
+            _ftags.append(i)
+            candi=candi-d_top_tags[i]
+ret= [[i,d_url_foruse[i],func(d_url_foruse[i],i)] for i in candi]
+```
+&emsp;&emsp;&emsp;&emsp;By the way, the "确定" button is obtained without using ```<form>```, instead, it uses ```window.location.href="...";``` like this:
+```js
+function redire(){
+    var _tags='';
+    var _ftags='';
+    for(i of tags_set)_tags+=i+',';
+    for(i of ftags_set)_ftags+=i+',';
+    window.location.href="tags?tags="+_tags+"&ftags="+_ftags;
+}
+```
 ## Team cooperation
 ### Source Code Management
 We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
