@@ -179,7 +179,93 @@ while(len(visited) < 10000):
         visitingId = visitingQueque.get()
     response = makeRequest(visitingId)
 ```
-
+#### Another version to crawl(the same solving ideas，but robust performance is worse)
+```python
+import requests
+import collections
+import json
+followers = []
+ids=collections.deque()
+id_used=[6662895]
+def dumptojson(res):
+    fp = open('homework.json', 'w', encoding='utf-8')
+    json.dump(res, fp=fp, ensure_ascii=False)
+def getSinglefollow1(id):
+    follower=[{'main_id':id}]
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+        'cookie': 'first_visit_datetime_pc=2021-01-28+09:37:46; yuid_b=NkaTUSk; p_ab_id=1; p_ab_id_2=4; p_ab_d_id=1577289544; a_type=0; b_type=1; cto_bundle=EFPR519GUjBEVzRkSTFYeXlWSVpHb0VaWmROeldnV0tBTG9paFNWUUV5JTJCNDZLJTJGbE9lMGdrbHBYRE9OUUYzJTJCdGdvTkpzZnJwRFBGeVBwOWUlMkJNNExxM0RneTJCNGlsVzlzczd1VlRjMkI3bEgzQXRJTXllSFpLaGlUWHVlWnNidVVZZjJi; c_type=25; login_ever=yes; __utmz=235335808.1631336752.3.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not provided); __utmv=235335808.|2=login ever=yes=1^3=plan=normal=1^5=gender=male=1^6=user_id=14078221=1^9=p_ab_id=1=1^10=p_ab_id_2=4=1^11=lang=zh=1; _ga=GA1.2.257473138.1612919016; privacy_policy_notification=0; ki_s=; _im_uid.3929=b.cec15a91dc4d4c65; tag_view_ranking=RTJMXD26Ak~_EOd7bsGyl~QaiOjmwQnI~jk9IzfjZ6n~_hSAdpN9rx~WuRP3NHCdl~geozHUfkjH~jO2POikggL~3ogUTkvvsO~CFcfY7SdnH~qx-Tlvmbdj~azESOjmQSV~_Jc3XITZqL~q303ip6Ui5~zIv0cf5VVk~WdKNu4p5bE~Ce-EdaHA-3~hW_oUTwHGx~eVxus64GZU~HY55MqmzzQ~ZTBAtZUDtQ~iUx3FpZLw5~cIofvt9YXx~y3NlVImyly~O7QBeW3lwy~LjyHBw5hxm~ETjPkL0e6r~g0twlxZSYP~bdaGGvQc_Q~AjBDLpRc95~-djhIhdgci~0xsDLqCEW6~Bd2L9ZBE8q~JXmGXDx4tL~cbmDKjZf9z~r01unnQL0a~Ie2c51_4Sp~KOnmT1ndWG~-StjcwdYwv~cFXtS-flQO; ki_r=; _gcl_au=1.1.1160468973.1636365478; __utma=235335808.257473138.1612919016.1631336752.1636365478.4; __utmc=235335808; __utmt=1; __cf_bm=VN7K1cUnJU6VatjJU_KGoqhNpQpgBoZiy7vAP8adRjg-1636365478-0-AYesem9oKB0HPW9QWWbR0nttmzSNQs9/XdlShp/DVCJHXLlJGu0eWkk4UEWb86B5gq904+djVF5iNtpfBEsmB+AXB12w3hlffm28bvKrQFcm9s0C6zwrqBp+b/hC+CrmT2TnIgFE4UIx1al2bgdsUEoA2tuIxxWU+4EfVpyfmcZA5pKHw65ZqxVhEtXYMoX0RQ==; tags_sended=1; categorized_tags=AjBDLpRc95~BeQwquYOKY~IRbM9pb4Zw~O7QBeW3lwy~Q54wE_yVW1~TPgZgSSzGU~WuRP3NHCdl~m3EJRa33xU; _gid=GA1.2.1197812392.1636365483; PHPSESSID=14078221_nDcRmpTaVc2zq8LO4tq8fm8UxKHr2jiq; device_token=915f62262524cea298b51cf70145f225; privacy_policy_agreement=0; __utmb=235335808.3.10.1636365478; ki_t=1611794303684;1636365488338;1636365512586;6;10',
+        'referer': 'https://www.pixiv.net/users/' + id + '/following',
+    }
+    url = 'https://www.pixiv.net/ajax/user/'+id+'/following?offset=0&limit=24&rest=show&tag=&lang=zh'
+    response =requests.get(url, headers=headers).json()
+    total = response['body']['total']
+    for i in range(0,total,24):
+        url='https://www.pixiv.net/ajax/user/'+id+'/following?offset='+str(i*24)+'&limit=24&rest=show&tag=&lang=zh'
+        response = requests.get(url, headers=headers).json()
+        users = response['body']['users']
+        for user in users:
+            id = user['userId']
+            if(id not in id_used):
+                ids.append(id)
+            username = user['userName']
+            illusts = user['illusts']
+            imgs_id = []
+            imgs_title = []
+            imgs_url = []
+            for illust in illusts:
+                img_id = illust['id']
+                img_title = illust['title']
+                img_url = illust['url']
+                imgs_id.append(img_id)
+                imgs_title.append(img_title)
+                imgs_url.append(img_url)
+            follower.append({'id': id, 'username': username, 'img_id': imgs_id, 'img_title': imgs_title, 'img_url': imgs_url})
+    return follower
+def getAllfollow():
+    global repeat
+    follower=[{'main_id':'6662895'}]
+    s=requests.session()
+    url = 'https://www.pixiv.net/ajax/user/6662895/following?offset=0&limit=24&rest=show&tag=&lang=zh'
+    headers1 = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+        'cookie': 'first_visit_datetime_pc=2021-01-28+09:37:46; yuid_b=NkaTUSk; p_ab_id=1; p_ab_id_2=4; p_ab_d_id=1577289544; a_type=0; b_type=1; cto_bundle=EFPR519GUjBEVzRkSTFYeXlWSVpHb0VaWmROeldnV0tBTG9paFNWUUV5JTJCNDZLJTJGbE9lMGdrbHBYRE9OUUYzJTJCdGdvTkpzZnJwRFBGeVBwOWUlMkJNNExxM0RneTJCNGlsVzlzczd1VlRjMkI3bEgzQXRJTXllSFpLaGlUWHVlWnNidVVZZjJi; c_type=25; login_ever=yes; __utmz=235335808.1631336752.3.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not provided); __utmv=235335808.|2=login ever=yes=1^3=plan=normal=1^5=gender=male=1^6=user_id=14078221=1^9=p_ab_id=1=1^10=p_ab_id_2=4=1^11=lang=zh=1; _ga=GA1.2.257473138.1612919016; privacy_policy_notification=0; ki_s=; _im_uid.3929=b.cec15a91dc4d4c65; tag_view_ranking=RTJMXD26Ak~_EOd7bsGyl~QaiOjmwQnI~jk9IzfjZ6n~_hSAdpN9rx~WuRP3NHCdl~geozHUfkjH~jO2POikggL~3ogUTkvvsO~CFcfY7SdnH~qx-Tlvmbdj~azESOjmQSV~_Jc3XITZqL~q303ip6Ui5~zIv0cf5VVk~WdKNu4p5bE~Ce-EdaHA-3~hW_oUTwHGx~eVxus64GZU~HY55MqmzzQ~ZTBAtZUDtQ~iUx3FpZLw5~cIofvt9YXx~y3NlVImyly~O7QBeW3lwy~LjyHBw5hxm~ETjPkL0e6r~g0twlxZSYP~bdaGGvQc_Q~AjBDLpRc95~-djhIhdgci~0xsDLqCEW6~Bd2L9ZBE8q~JXmGXDx4tL~cbmDKjZf9z~r01unnQL0a~Ie2c51_4Sp~KOnmT1ndWG~-StjcwdYwv~cFXtS-flQO; ki_r=; _gcl_au=1.1.1160468973.1636365478; __utma=235335808.257473138.1612919016.1631336752.1636365478.4; __utmc=235335808; __utmt=1; __cf_bm=VN7K1cUnJU6VatjJU_KGoqhNpQpgBoZiy7vAP8adRjg-1636365478-0-AYesem9oKB0HPW9QWWbR0nttmzSNQs9/XdlShp/DVCJHXLlJGu0eWkk4UEWb86B5gq904+djVF5iNtpfBEsmB+AXB12w3hlffm28bvKrQFcm9s0C6zwrqBp+b/hC+CrmT2TnIgFE4UIx1al2bgdsUEoA2tuIxxWU+4EfVpyfmcZA5pKHw65ZqxVhEtXYMoX0RQ==; tags_sended=1; categorized_tags=AjBDLpRc95~BeQwquYOKY~IRbM9pb4Zw~O7QBeW3lwy~Q54wE_yVW1~TPgZgSSzGU~WuRP3NHCdl~m3EJRa33xU; _gid=GA1.2.1197812392.1636365483; PHPSESSID=14078221_nDcRmpTaVc2zq8LO4tq8fm8UxKHr2jiq; device_token=915f62262524cea298b51cf70145f225; privacy_policy_agreement=0; __utmb=235335808.3.10.1636365478; ki_t=1611794303684;1636365488338;1636365512586;6;10',
+        'referer': 'https://www.pixiv.net/users/6662895/following',
+    }
+    response = s.get(url, headers=headers1).json()
+    total= response['body']['total']
+    # url = 'https://www.pixiv.net/ranking.php?mode=daily&content=illust&p=%d&format=json' % n
+    # url='https://www.pixiv.net/ajax/user/6662895/following?offset=0&limit=24&rest=show&tag=&lang=zh'
+    for i in range(0,total,24):
+        url='https://www.pixiv.net/ajax/user/6662895/following?offset='+str(i)+'&limit=24&rest=show&tag=&lang=zh'
+        response = s.get(url, headers=headers1).json()
+        users = response['body']['users']
+        for user in users:
+            id = user['userId']
+            ids.append(id)
+            username=user['userName']
+            illusts=user['illusts']
+            imgs_id=[]
+            imgs_title=[]
+            imgs_url=[]
+            for illust in illusts:
+                img_id=illust['id']
+                img_title=illust['title']
+                img_url=illust['url']
+                imgs_id.append(img_id)
+                imgs_title.append(img_title)
+                imgs_url.append(img_url)
+            follower.append({'id':id,'username':username,'img_id':imgs_id,'img_title':imgs_title,'img_url':imgs_url})
+        followers.append(follower)
+    while(len(id_used)<10000):
+        cur_id=ids.popleft()
+        id_used.append(cur_id)
+        followers.append(getSinglefollow1(cur_id))
+    print(len(ids))
+    return followers
+res=getAllfollow()
+dumptojson(res)
+```
 #### Multi-threading
 Consider the network I/O takes up most of the time, it is necessary to apply multithreading. In this case, we spawned 4 threads.  
 The `visitingQueue` can serve as the scheduler of the threads.  
@@ -356,6 +442,101 @@ illusts_mappings = {
 ## Visualization
 ***
 ## Website
+### Page harmony
+The most difficult part of building a website is that it must combine all the work done that realize different features of it .At first, I didn't realize that my teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need [] to bond statics,so mistake like picture below happened.
+![](img/hcy_01.png)
+That is Vue and Flask's Jinja2 module reuse problems.
+To slove this,I use code below:
+```python
+app.jinja_env.variable_start_string = '{['
+app.jinja_env.variable_end_string = ']}'
+```
+But later I found different CSS can result that the page seems horribly messy.And things become troublesome especialy when it comes to locate which css make it perform like that.So although I want to make some interaction body using Vue,page harmony become so important that I have to weigh.
+At first I try to use Bootstrap，but it seems not as perfect as I thought.Here's a rendering of my first version
+![](img/hcy_02.jpg)
+And the same, because Bootstrap's css is confict with one of my teammate's css,I have to find a template that is more compatible。
+So I choose NicePage,
+because all it's headers are approximately the same.
+```HTML
+<html style="font-size: 16px;">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Illustration &amp;amp; Art Guide">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>Home</title>
+    <link rel="stylesheet" href="/static/nicepage.css" media="screen">
+<link rel="stylesheet" href="/static/Home.css" media="screen">
+    <script class="u-script" type="text/javascript" src="/static/jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="/static/nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 4.1.0, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700">
+    
+    
+    
+    
+    <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": "",
+		"logo": "images/e1480079-83f8-6e77-e4f6-3ec006fc0d60.jpg"
+}</script>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="Home">
+    <meta property="og:type" content="website">
+  </head>
+  <body class="u-body u-overlap"><header class="u-align-center-xs u-border-1 u-border-grey-25 u-clearfix u-header u-header" id="sec-d1d3"><div class="u-clearfix u-sheet u-sheet-1">
+        <a href="https://nicepage.com" class="u-image u-logo u-image-1" data-image-width="1080" data-image-height="1080">
+          <img src="/static/images/20211223145559.png" class="u-logo-image u-logo-image-1">
+        </a>
+        <form action="search" method="post" class="u-border-1 u-border-grey-15 u-search u-search-right u-search-1">
+          <button class="u-search-button" type="submit">
+            <span class="u-search-icon u-spacing-10 u-text-grey-40">
+              <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 56.966 56.966" style=""><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-b04b"></use></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-b04b" x="0px" y="0px" viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;" xml:space="preserve" class="u-svg-content"><path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"></path><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
+            </span>
+          </button>
+          <input name="info" class="u-search-input" type="search" name="search" value="" placeholder="Search">
+        </form>
+        <nav class="u-align-left u-menu u-menu-dropdown u-nav-spacing-25 u-offcanvas u-menu-1">
+          <div class="menu-collapse">
+            <a class="u-button-style u-nav-link" href="#" style="padding: 4px 0px; font-size: calc(1em + 8px);">
+              <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style=""><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-7b92"></use></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-7b92" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content"><g><rect y="36" width="302" height="30"></rect><rect y="236" width="302" height="30"></rect><rect y="136" width="302" height="30"></rect>
+</g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
+            </a>
+          </div>
+          <div class="u-custom-menu u-nav-container">
+            <ul class="u-nav u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/home" style="padding: 10px 20px;">Home</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/static" style="padding: 10px 20px;">Statics</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/map" style="padding: 10px 20px;">Map</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/search" style="padding: 10px 20px;">Search</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/tags" style="padding: 10px 20px;">Tags</a>
+            </li></ul>
+                      </div>
+                      <div class="u-custom-menu u-nav-container-collapse">
+                        <div class="u-align-center u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+                          <div class="u-inner-container-layout u-sidenav-overflow">
+                            <div class="u-menu-close"></div>
+                            <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/home" style="padding: 10px 20px;">Home</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/static" style="padding: 10px 20px;">Statics</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/map" style="padding: 10px 20px;">Map</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/search" style="padding: 10px 20px;">Search</a>
+            </li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/tags" style="padding: 10px 20px;">Tags</a>
+            </li></ul>
+              </div>
+            </div>
+            <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+          </div>
+        </nav>
+      </div></header>
+```
+And differnt page can use different css which make it easy to locate and make change
+![](img/hcy_03.jpg)
+For example, I want to change some image in the html,I first find it's id equal to u-image-1,and css is map.css,then I turn to map.css and
+![](img/hcy_04.jpg)
 ### Valid Picture 
 &emsp;&emsp;&emsp;&emsp;We already have the **url** of each image. However, the **url** is not only forbidden here but also could not request directly because their anti-crawler methods. At first, we thought of save all of the pictures to loacl. But after computing the approximate sizeof the images, we decided to give up. Not only because It's too large to store, but also because we could not use **wifi** and the cost is too high.
 &emsp;&emsp;&emsp;&emsp;Suddenly, we thought of getting the image from other source. I found a mirror website of Pixiv and found that the **url** of this website is kind of similar to Pixiv. What we would have to do is converting ```"https://i.pximg.net/c/250x250_80_a2/img-master/img/2010/09/22/00/19/05/13399152_p0_square1200.jpg"``` to ```https://proxy.pixivel.moe/img-original/img/2010/09/22/00/19/05/13399152_p0.jpg``` or ```https://proxy-jp1.pixivel.moe/c/600x1200_90/img-master/img/2010/09/22/00/19/05/13399152_p0_master1200.jpg```. 
@@ -517,7 +698,9 @@ The hash function used on illustrators doesn't discriminate illustrations well.
 <img src="img/illust_hash.png"></img>  
 Current features are all based on illustration tags, rather than illustration itself. So next step, we can apply computer vision method, 
 such as ResNet or AlexNet.
-
+### make it more interactive
+Most of the page is just representing the data or image, And make it a little bit boring。
+Some Interactive elements can be add to attract visitors.
 ### Handle Synonymous Tags
 There are many synonymous tags in our data. However, the PCA algorithm can't tell if two tags hane the same meaning. For example, following four tags all refer to the same character.  
 <img src="img/synonymous_tags.png"></img>
