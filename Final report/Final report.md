@@ -3,8 +3,8 @@
 
 
 ## Project Design
-There are numerous awesome illustrators and delicate illustrations on the internet.But have you ever thought how they are related to each other?  
-Our project aims to find and visualizing the relationship between each illustrator and illustration, by the means of **illustrator map** and **illustration ranking & trending**.  
+&emsp;&emsp;There are numerous awesome illustrators and delicate illustrations on the internet.But have you ever thought how they are related to each other?  
+&emsp;&emsp;Our project aims to find and visualizing the relationship between each illustrator and illustration, by the means of **illustrator map** and **illustration ranking & trending**.  
 ### Illustrator map
 &emsp;&emsp;By static the tags of one illustrator's works and turn it to a vector, we can represent the style of an author as a vector. Plotting it one a graph and add following relationship as edges, we get the illustrator map.  
 <img src="img/word2vec.png"></img>
@@ -31,7 +31,7 @@ The data we want include:
 - `https://www.pixiv.net/ajax/user/{userId}/illusts/tags?lang=zh`
 - `https://www.pixiv.net/ajax/user/{userId}/following?offset={}&limit={}&rest=show&tag=&lang=zh`
 
-The content looks like this:  
+&emsp;&emsp;The content looks like this:  
 ```json
 // /ajax/user/15158551/following
 {
@@ -178,7 +178,7 @@ while(len(visited) < 10000):
         visitingId = visitingQueque.get()
     response = makeRequest(visitingId)
 ```
-#### Another version to crawl(the same solving ideas，but robust performance is worse)
+&emsp;&emsp;Another version to crawl (the same solving ideas, but not as robust)
 ```python
 import requests
 import collections
@@ -338,7 +338,8 @@ dumptojson(res)
 |Users|illusts|
 |:-:|:-:|
 |![](./img/xjq_1.png)|![](./img/xjq_2.png)|
-&emsp;&emsp;Here's the code that fill in the table:
+
+&emsp;&emsp;Here's the code that fills in the table:
 ```python
 import json,os,pymysql
 from tqdm import tqdm
@@ -462,11 +463,11 @@ def search(self, key, method):
 ***
 ## Visualization
 ### Data Charts 
-&emsp;&emsp;We prepared a page called "statics" to show our data size and ranking lists of some data,aiming to enrich the content of our site.
+&emsp;&emsp;We prepared a page called "statics" to show our data size and ranking lists of some data, aiming to enrich the content of our site.
 
-&emsp;&emsp;It's mainly consist of 4 pictures, an authors ranking list,a tags ranking list, a development tendency chart of the tags in last 7 years and the word cloud picture of all the tags.
+&emsp;&emsp;It mainly consists of 4 pictures, an authors ranking list,a tags ranking list, a development tendency chart of the tags in last 7 years and the word cloud picture of all the tags.
 
-&emsp;&emsp;Using the echarts,we can easily make these pictures.
+&emsp;&emsp;Using the echarts, we can easily make these pictures.
 
 #### Tools Used
 ```html
@@ -478,7 +479,7 @@ def search(self, key, method):
 #### Data Acquisition 
 &emsp;&emsp;All the data come from our crawler and database.
 
-&emsp;&emsp;Through two ways,we can let the charts get the data.
+&emsp;&emsp;Through two ways, we can let the charts get the data.
 ##### 1. put the data in the charts(direct access)
 like this:
 ```js
@@ -668,7 +669,7 @@ series: [
 &emsp;&emsp;Let's first establish the relationship graph between painters. The information we obtained from Pixiv includes followers of illustrators. So we set up several illustrators nodes and add directed edges between the nodes according to the followers information. For example, if illustrator A’s followers include illustrator B, we add an edge from node B to node A. 
 
 
-&emsp;&emsp;Then we cluster the illustrators nodes. Because the information of the illustrators is collected and the tag information of the illustrations is recorded, we have counted the frequency of each tag appearing in each illustrators, through the tags between the illustrators similarity to cluster. 
+&emsp;&emsp;Then we cluster the illustrators nodes by **Kmeans**. Because the information of the illustrators is collected and the tag information of the illustrations is recorded, we have counted the frequency of each tag appearing in each illustrators, through the tags between the illustrators similarity to cluster. 
 
 
 #### Major difficulty 
@@ -833,7 +834,7 @@ with open("jl.html","w",encoding="utf-8") as f:
 
 ## Website
 ### Page harmony
-&emsp;&emsp;The most difficult part of building a website is that it must combine all the work done that realize different features of it. At first, we didn't realize that our teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need [] to bond statics, so mistake like picture below happened.
+&emsp;&emsp;The most difficult part of building a website is that it must combine all the work done that realize different features of it. At first, we didn't realize that our teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need `[]` to bond statics, so mistake like picture below happened.
 ![](img/hcy_01.png)
 &emsp;&emsp;That is Vue and Flask's Jinja2 module reuse problems.  
 &emsp;&emsp;To slove this, we use code below:
@@ -928,7 +929,7 @@ because all it's headers are approximately the same.
 &emsp;&emsp;For example, we want to change some image in the html, we first find it's id equal to u-image-1, and css is map.css,then we turn to map.css and
 ![](img/hcy_04.jpg)
 ### Valid Picture 
-&emsp;&emsp;We already have the **url** of each image. However, the **url** is not only forbidden here but also could not request directly because their anti-crawler methods. At first, we thought of save all of the pictures to loacl. But after computing the approximate sizeof the images, we decided to give up. Not only because wet's too large to store, but also because we could not use **wifi** and the cost is too high.   
+&emsp;&emsp;We already have the **url** of each image. However, the **url** is not only forbidden here but also could not request directly because their anti-crawler methods. At first, we thought of save all of the pictures to loacl. But after computing the approximate sizeof the images, we decided to give up. Not only because wet's too large to store, but also because the data charges are costly.   
 &emsp;&emsp;Suddenly, we thought of getting the image from other source. We found a mirror website of Pixiv and found that the **url** of this website is kind of similar to Pixiv. What we would have to do is converting ```"https://i.pximg.net/c/250x250_80_a2/img-master/img/2010/09/22/00/19/05/13399152_p0_square1200.jpg"``` to ```https://proxy.pixivel.moe/img-original/img/2010/09/22/00/19/05/13399152_p0.jpg``` or ```https://proxy-jp1.pixivel.moe/c/600x1200_90/img-master/img/2010/09/22/00/19/05/13399152_p0_master1200.jpg```.   
 &emsp;&emsp;Here comes the problem that this mirror website is not good enough to provide all images we needed. In other word, some of the **url** is not valid.   
 &emsp;&emsp;To avoid our website from showing a lot of broken images, we need to check all the urls. Which is quite time consuming. Here's the code:
