@@ -1,10 +1,7 @@
-> 说明：请将自己负责书写的内容写到对应的二级标题下。把改进的想法写到 future work 标题以下。如需插入图片，请放在`./img/`路径下。  
-> Markdown 的语法可以参考 https://markdown.com.cn/basic-syntax/ 。相信在30分钟内你就可以掌握。  
-> 如果你尚没有编辑过markdown，我建议你使用`vscode`+`markdown all in one` 插件编辑
 # Make Illustrators Relationship Visible: Final Report of ICE2604 Group 2
 <img src="img/logo.png"></img>
 
-[toc]
+
 ## Project Design
 There are numerous awesome illustrators and delicate illustrations on the internet.But have you ever thought how they are related to each other?  
 Our project aims to find and visualizing the relationship between each illustrator and illustration, by the means of **illustrator map** and **illustration ranking & trending**.  
@@ -16,8 +13,7 @@ Our project aims to find and visualizing the relationship between each illustrat
 &emsp;&emsp;By analyze the create date, tags and bookmarks of illustration, we can point out the trending and make predictions.
 <img src="img/trending.png"></img>
 
-***
-## Our work
+
 ***
 ## Data and Crawler
 ### Crawler  
@@ -294,8 +290,8 @@ dumptojson(res)
 }
 ```
 &emsp;&emsp;The useful part of infomation is in ```json.load(f)["body"]["users"]```, and it's empty here, which means this user whose **userId** is ```"12138318"``` doesn't follow any other users. That's also the reason this file is the smallest.  
-&emsp;&emsp;In the list of ```json.load(f)["body"]["users"]``` are all of the users that this user is following. And all I need to do is collect their userIds because **userId** can convey the infomation between them.  
-&emsp;&emsp;However, there's one problem. Fisrt, we have no infomation about users themselves. If I colloct only the **userId**, all we would got is some numbers. And there's no more infomation about the user himself in his own json file. So I need to get the infomation from other users that are following this user. Doing this has a risk that if one user isn't being followed by other user then hinself would have no detailed infomation. We won't even know his userName.   
+&emsp;&emsp;In the list of ```json.load(f)["body"]["users"]``` are all of the users that this user is following. And all we need to do is collect their userIds because **userId** can convey the infomation between them.  
+&emsp;&emsp;However, there's one problem. Fisrt, we have no infomation about users themselves. If we colloct only the **userId**, all we would got is some numbers. And there's no more infomation about the user himself in his own json file. So we need to get the infomation from other users that are following this user. Doing this has a risk that if one user isn't being followed by other user then hinself would have no detailed infomation. We won't even know his userName.   
 &emsp;&emsp;Luckily, we could prove that every user in the dir has someone following him except one because Huang haoxv collected them using DFS method and all of the users we saved must has someone following him except the first user chosen to be the start node.  
 &emsp;&emsp;A single elem in ```json.load(f)["body"]["users"]``` would be like this:
 ```json
@@ -338,7 +334,7 @@ dumptojson(res)
 - illusts
 - createDate
 
-&emsp;&emsp;And with the following relation we got, I made two tables in MySQL like this:
+&emsp;&emsp;And with the following relation we got, we made two tables in MySQL like this:
 |Users|illusts|
 |:-:|:-:|
 |![](./img/xjq_1.png)|![](./img/xjq_2.png)|
@@ -390,7 +386,7 @@ tmp=[[imgs[img_id][k] for k in ["id","title","url"]]+[",".join(imgs[img_id]["tag
 cursor.executemany("INSERT INTO illusts (id,title,url,tags,userId,createDate) VALUES (%s,%s,%s,%s,%s,%s)",tmp)
 conn.commit()
 ```
-&emsp;&emsp;Also, I used ```tqdm``` to add a process bar to visualize the procedure of the program.
+&emsp;&emsp;Also, we used ```tqdm``` to add a process bar to visualize the procedure of the program.
 ***
 ## Search Engine
 &emsp;&emsp;The search engine is based on Elastic Search. We aim to search illustrators and illustrations by id, name, tag.  
@@ -682,7 +678,7 @@ series: [
 
 #### Final solution
 
-&emsp;&emsp;In order to classify the painter nodes clearly, we use the Principal Component Analysis (PCA) algorithm. Consider each illustrator's tags as a multi-dimensional vector, and the frequency of each tag is the value of the corresponding component of the vector; tags not owned by the illustrator are the components with a value of 0. Through this process, we created an N-dimensional vector corresponding to each illustrator in an N-dimensional vector space, and then reduced the N-dimensional vector to two dimensions to draw the corresponding two-dimensional image. 
+&emsp;&emsp;In order to classify the painter nodes clearly, we use the **Principal Component Analysis (PCA)** algorithm. Consider each illustrator's tags as a multi-dimensional vector, and the frequency of each tag is the value of the corresponding component of the vector; tags not owned by the illustrator are the components with a value of 0. Through this process, we created an N-dimensional vector corresponding to each illustrator in an N-dimensional vector space, and then reduced the N-dimensional vector to two dimensions to draw the corresponding two-dimensional image. 
 
 &emsp;&emsp;After the process of the PCA algorithm, the data is clustered according to the tags information of each node. Export the coordinate information and classification information of each node as a table file, and then import it into Gephi, using Geo Layout to lay out, coloring according to the coordinates, and finally output the svg image. 
 
@@ -837,19 +833,19 @@ with open("jl.html","w",encoding="utf-8") as f:
 
 ## Website
 ### Page harmony
-&emsp;&emsp;The most difficult part of building a website is that it must combine all the work done that realize different features of it .At first, I didn't realize that my teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need [] to bond statics,so mistake like picture below happened.
+&emsp;&emsp;The most difficult part of building a website is that it must combine all the work done that realize different features of it. At first, we didn't realize that our teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need [] to bond statics, so mistake like picture below happened.
 ![](img/hcy_01.png)
-&emsp;&emsp;That is Vue and Flask's Jinja2 module reuse problems.
-&emsp;&emsp;To slove this,I use code below:
+&emsp;&emsp;That is Vue and Flask's Jinja2 module reuse problems.  
+&emsp;&emsp;To slove this, we use code below:
 ```python
 app.jinja_env.variable_start_string = '{['
 app.jinja_env.variable_end_string = ']}'
 ```
-&emsp;&emsp;But later I found different CSS can result that the page seems horribly messy.And things become troublesome especialy when it comes to locate which css make it perform like that.So although I want to make some interaction body using Vue,page harmony become so important that I have to weigh.  
-&emsp;&emsp;At first I try to use Bootstrap，but it seems not as perfect as I thought.Here's a rendering of my first version
+&emsp;&emsp;But later we found different CSS can result that the page seems horribly messy. And things become troublesome especialy when it comes to locate which css make it perform like that. So although we want to make some interaction body using Vue, page harmony become so important that we have to weigh.  
+&emsp;&emsp;At first we try to use Bootstrap, but it seems not as perfect as we thought. Here's a rendering of our first version
 ![](img/hcy_02.jpg)
-&emsp;&emsp;And the same, because Bootstrap's css is confict with one of my teammate's css,I have to find a template that is more compatible。  
-&emsp;&emsp;So I choose NicePage,
+&emsp;&emsp;And the same, because Bootstrap's css is confict with one of our teammate's css, we have to find a template that is more compatible.  
+&emsp;&emsp;So we choose NicePage, 
 because all it's headers are approximately the same.
 ```HTML
 <html style="font-size: 16px;">
@@ -927,13 +923,13 @@ because all it's headers are approximately the same.
         </nav>
       </div></header>
 ```
-&emsp;&emsp;And differnt page can use different css which make it easy to locate and make change
+&emsp;&emsp;And different page can use different css which make it easy to locate and make changes.
 ![](img/hcy_03.jpg)
-&emsp;&emsp;For example, I want to change some image in the html,I first find it's id equal to u-image-1,and css is map.css,then I turn to map.css and
+&emsp;&emsp;For example, we want to change some image in the html, we first find it's id equal to u-image-1, and css is map.css,then we turn to map.css and
 ![](img/hcy_04.jpg)
 ### Valid Picture 
-&emsp;&emsp;We already have the **url** of each image. However, the **url** is not only forbidden here but also could not request directly because their anti-crawler methods. At first, we thought of save all of the pictures to loacl. But after computing the approximate sizeof the images, we decided to give up. Not only because It's too large to store, but also because we could not use **wifi** and the cost is too high.   
-&emsp;&emsp;Suddenly, we thought of getting the image from other source. I found a mirror website of Pixiv and found that the **url** of this website is kind of similar to Pixiv. What we would have to do is converting ```"https://i.pximg.net/c/250x250_80_a2/img-master/img/2010/09/22/00/19/05/13399152_p0_square1200.jpg"``` to ```https://proxy.pixivel.moe/img-original/img/2010/09/22/00/19/05/13399152_p0.jpg``` or ```https://proxy-jp1.pixivel.moe/c/600x1200_90/img-master/img/2010/09/22/00/19/05/13399152_p0_master1200.jpg```.   
+&emsp;&emsp;We already have the **url** of each image. However, the **url** is not only forbidden here but also could not request directly because their anti-crawler methods. At first, we thought of save all of the pictures to loacl. But after computing the approximate sizeof the images, we decided to give up. Not only because wet's too large to store, but also because we could not use **wifi** and the cost is too high.   
+&emsp;&emsp;Suddenly, we thought of getting the image from other source. We found a mirror website of Pixiv and found that the **url** of this website is kind of similar to Pixiv. What we would have to do is converting ```"https://i.pximg.net/c/250x250_80_a2/img-master/img/2010/09/22/00/19/05/13399152_p0_square1200.jpg"``` to ```https://proxy.pixivel.moe/img-original/img/2010/09/22/00/19/05/13399152_p0.jpg``` or ```https://proxy-jp1.pixivel.moe/c/600x1200_90/img-master/img/2010/09/22/00/19/05/13399152_p0_master1200.jpg```.   
 &emsp;&emsp;Here comes the problem that this mirror website is not good enough to provide all images we needed. In other word, some of the **url** is not valid.   
 &emsp;&emsp;To avoid our website from showing a lot of broken images, we need to check all the urls. Which is quite time consuming. Here's the code:
 ```python
@@ -963,7 +959,7 @@ tmp=[[imgs[img_id][k] for k in ["id","title","url"]]+[",".join(imgs[img_id]["tag
 cursor.executemany("INSERT INTO illusts (id,title,url,tags,userId,createDate) VALUES (%s,%s,%s,%s,%s,%s)",tmp)
 conn.commit()
 ```
-&emsp;&emsp;&emsp;&emsp;This took me about a whole day. And I'd have to run another. (```url_foruse``` is a newly added col which stores the **url** that could be requestd directly)
+&emsp;&emsp;&emsp;&emsp;This took us about a whole day. And I'd have to run another. (```url_foruse``` is a newly added col which stores the **url** that could be requestd directly)
 ```python
 import requests,pymysql
 from tqdm import tqdm
@@ -1002,7 +998,7 @@ for ill in tqdm(ills):
             cursor.execute("UPDATE illusts SET url_foruse=%s WHERE id=%s",("None",ill[0]))
             conn.commit()
 ```
-&emsp;&emsp;At that time I havn't learnt much about **html** and **js** and didn't known about ```onerror``` of ```<img></img>```. If I'd know that, I wouldn't run a program that is such time consuming.
+&emsp;&emsp;At that time we havn't learnt much about **html** and **js** and didn't known about ```onerror``` of ```<img></img>```. If I'd know that, we wouldn't run a program that is such time consuming.
 ```html
 <script>
     function imgerrorfun(x){
@@ -1027,15 +1023,15 @@ for ill in tqdm(ills):
 ***
 ### The Tags Page
 #### Picture Part
-&emsp;&emsp;Since our goal is to build a website that shows pisture, it is very important to find a good way to show others the illusts. The **Masonry Layouts** comes to my mind.  
+&emsp;&emsp;Since our goal is to build a website that shows pisture, it is very important to find a good way to show others the illusts. The **Masonry Layouts** comes to our mind.  
 &emsp;&emsp;The **Masonry Layouts** form is to place pictures on the page in many cols with the same width but the height is different. Probably like this:
 ![](img/xjq_3.png)
 &emsp;&emsp;However, because of the size of the img we could get, it might be a little bit large to show so many pictures on one page. So we would just show two cols. Like this:
 ![](img/xjq_4.png)
 &emsp;&emsp;Here's some details about the page.  
-&emsp;&emsp;To keep the order of the pictures, I could not just do it with **css**, instead, I would have to do it with **js** and **css**.   
-&emsp;&emsp;First of all, constrain the width of the img with **css**. Next, define the ```checkFlag``` function to reset the pictures when the ```document``` is ```onload```. In this function, I'd have to compute the num of pictures of each column. Also, I had to reset the height of container to display the pictures seperately.   
-&emsp;&emsp;After doing this, the pictures is already in the form of **Masonry Layouts**. However, the num of the pictures is fixed. What we want is the type of Masonry Layouts that is endless. That would pour more and more pictures when the user scroll to the bottom of the page. In other word, the pictures must be loaded asynchronously. I have no idea about this so I would learn it from the beginning.  
+&emsp;&emsp;To keep the order of the pictures, we could not just do it with **css**, instead, we would have to do it with **js** and **css**.   
+&emsp;&emsp;First of all, constrain the width of the img with **css**. Next, define the ```checkFlag``` function to reset the pictures when the ```document``` is ```onload```. In this function, I'd have to compute the num of pictures of each column. Also, we had to reset the height of container to display the pictures seperately.   
+&emsp;&emsp;After doing this, the pictures is already in the form of **Masonry Layouts**. However, the num of the pictures is fixed. What we want is the type of Masonry Layouts that is endless. That would pour more and more pictures when the user scroll to the bottom of the page. In other word, the pictures must be loaded asynchronously. We have no idea about this so we would learn it from the beginning.  
 &emsp;&emsp;At that time didn't know **js** well. And the first idea that comes to real is using **Ajax**, the **requests** of **js**. Here's the basic code.  
 ```JavaScript
 var xmlhttp;
@@ -1053,7 +1049,7 @@ xmlhttp.onreadystatechange=function(){
 xmlhttp.open("GET","/a?t="+ Math.random(),true);
 xmlhttp.send();
 ```
-&emsp;&emsp;This is used to get the infomation of the imgs to be added to the page. However, the images I got was repeated. And I could not fix it. Out of no reason. But I came to realize that I didn't needed to do so. All I need is to write the ```innerHTML``` of the container in the proper time. And the infomation of the pictures could be included then the **HTML** is rendered. Using ```Flask.render_templates```. Just like this:
+&emsp;&emsp;This is used to get the infomation of the imgs to be added to the page. However, the images we got was repeated. And we could not fix it. Out of no reason. But we came to realize that we didn't needed to do so. All we need is to write the ```innerHTML``` of the container in the proper time. And the infomation of the pictures could be included then the **HTML** is rendered. Using ```Flask.render_templates```. Just like this:
 ```js
 var imgData={
     "data":[
@@ -1064,7 +1060,7 @@ var imgData={
 }
 ```
 &emsp;&emsp;This woudn't cost much memery, since even a single picture is a lot larger than some simple text. So the problem comes to **when to write**.  
-&emsp;&emsp;The answer is the time you scroll to the bottom of the page. So I defined a function named ```check_bottom``` , whitch computes the position of the scrollbar and add picture to the page.
+&emsp;&emsp;The answer is the time you scroll to the bottom of the page. So we defined a function named ```check_bottom``` , whitch computes the position of the scrollbar and add picture to the page.
 ```js
 function check_bottom(){
     if((document.body.scrollTop+document.body.clientHeight-document.body.scrollHeight>-document.body.clientHeight/2)&&(document.getElementById("container").lastChild.firstChild.firstChild.firstChild.complete)){
@@ -1075,15 +1071,15 @@ function check_bottom(){
     }
 }
 ```
-&emsp;&emsp;Also, the function is used repeatly. So I need to ```var clo2=self.setInterval('check_bottom()',500);``` to call it each 500ms.  
+&emsp;&emsp;Also, the function is used repeatly. So we need to ```var clo2=self.setInterval('check_bottom()',500);``` to call it each 500ms.  
 &emsp;&emsp;Then comes the problem that the newly added picture is not well located. My solution is to call ```check_bottom``` every 500ms too.   
 &emsp;&emsp;Now the pictures could be shown nicely.
 #### Tags Part
-&emsp;&emsp;The item that inspired me about this part is the output of the search part of **bilibili**.   
+&emsp;&emsp;The item that inspired us about this part is the output of the search part of **bilibili**.   
 ![](img/xjq_5.png)
 <center><img src="img/xjq_6.png" height=200px></img></center>
 
-&emsp;&emsp;By then I thought I've got some idea about **js**, so I decided to write it with pure **js**.  
+&emsp;&emsp;By then we thought I've got some idea about **js**, so we decided to write it with pure **js**.  
 &emsp;&emsp;Listing all of the tags is terrible, so the tags here will only contains tags that be used more than 50 times.   
 &emsp;&emsp;You will find that the cyua buttons could change it's color if you click it. That means the tags be included or forbidden when you click the "确定" button.   
 &emsp;&emsp;When it's cyua, it's neither selected nor forbidden. When it's lime, it's selected. When it's gray, it's forbidden.  
@@ -1146,8 +1142,8 @@ function redire(){
 ```
 ### The Map Page
 #### Zoom of Map
-&emsp;&emsp;I copied the code from [svg-pan-zoom](https://github.com/bumbu/svg-pan-zoom), so there's nothing much to talk about.  
-&emsp;&emsp;Also, I noticed that some pages of acemap seems also used the same zoomimg method.
+&emsp;&emsp;We copied the code from [svg-pan-zoom](https://github.com/bumbu/svg-pan-zoom), so there's nothing much to talk about.  
+&emsp;&emsp;Also, we noticed that some pages of acemap seems also used the same zoomimg method.
 |svg-pan-zoom|CCFConfCompare|
 |:-:|:-:|
 |![](img/xjq_7.png)|![](img/xjq_8.png)|
@@ -1159,7 +1155,7 @@ function redire(){
 ...
 <circle class="id_2074388" cx="686.12494" cy="-1027.0114" fill="#00c7ff" fill-opacity="1.0" r="7.6373625" stroke="#000000" stroke-opacity="1.0" stroke-width="1.0"></circle>
 ```
-&emsp;&emsp;So I could select out the edges and nodes easily using ```querySelector```.
+&emsp;&emsp;So we could select out the edges and nodes easily using ```querySelector```.
 ```js
 var masks = document.getElementById("node-labels").querySelectorAll("text");
 var masks2 = document.getElementById("nodes").querySelectorAl("circle");
