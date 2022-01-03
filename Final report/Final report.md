@@ -661,59 +661,51 @@ series: [
 
 ***
 ### Map: Data Visualization Tasks and Realization Ideas
-1. The purpose of data visualization
+#### The purpose of data visualization
 
-In our division of labor, visualization mainly includes the establishment of a relationship graph from the collected illustrators information, which is used to reflect the following relationship between the illustrators as a directed graph. 
-
-
-
-2. Realization idea 
-
-Let's first establish the relationship graph between painters. The information we obtained from Pixiv includes followers of illustrators. So we set up several illustrators nodes and add directed edges between the nodes according to the followers information. For example, if illustrator A’s followers include illustrator B, we add an edge from node B to node A. 
+&emsp;&emsp;In our division of labor, visualization mainly includes the establishment of a relationship graph from the collected illustrators information, which is used to reflect the following relationship between the illustrators as a directed graph. 
 
 
-Then we cluster the illustrators nodes. Because the information of the illustrators is collected and the tag information of the illustrations is recorded, we have counted the frequency of each tag appearing in each illustrators, through the tags between the illustrators similarity to cluster. 
+
+#### Realization idea 
+
+&emsp;&emsp;Let's first establish the relationship graph between painters. The information we obtained from Pixiv includes followers of illustrators. So we set up several illustrators nodes and add directed edges between the nodes according to the followers information. For example, if illustrator A’s followers include illustrator B, we add an edge from node B to node A. 
 
 
-3. Major difficulty 
-
-The main software used in the visualization process is Gephi. However, when using Gephi for clustering algorithm, since the graph density is too large, it is difficult to form a clear classification between nodes, but it appears as a fairly uniform ball. 
+&emsp;&emsp;Then we cluster the illustrators nodes. Because the information of the illustrators is collected and the tag information of the illustrations is recorded, we have counted the frequency of each tag appearing in each illustrators, through the tags between the illustrators similarity to cluster. 
 
 
-4. Final solution
+#### Major difficulty 
 
-In order to classify the painter nodes clearly, we use the Principal Component Analysis (PCA) algorithm. Consider each illustrator's tags as a multi-dimensional vector, and the frequency of each tag is the size of the corresponding component of the vector; tags not owned by the illustrator are the components with a vector size of 0. Through this process, we created an N-dimensional vector corresponding to each illustrator in an N-dimensional vector space, and then reduced the N-dimensional vector to two dimensions to draw the corresponding two-dimensional image. 
+&emsp;&emsp;The main software used in the visualization process is Gephi. However, when using Gephi for clustering algorithm, since the graph density is too large, it is difficult to form a clear classification between nodes, but it appears as a fairly uniform ball. 
 
-After the process of the PCA algorithm, the data is clustered according to the tags information of each node. Export the coordinate information and classification information of each node as a table file, and then import it into Gephi, using Geo Layout to lay out, coloring according to the coordinates, and finally output the svg image. 
 
-5. Final code 
+#### Final solution
+
+&emsp;&emsp;In order to classify the painter nodes clearly, we use the Principal Component Analysis (PCA) algorithm. Consider each illustrator's tags as a multi-dimensional vector, and the frequency of each tag is the value of the corresponding component of the vector; tags not owned by the illustrator are the components with a value of 0. Through this process, we created an N-dimensional vector corresponding to each illustrator in an N-dimensional vector space, and then reduced the N-dimensional vector to two dimensions to draw the corresponding two-dimensional image. 
+
+&emsp;&emsp;After the process of the PCA algorithm, the data is clustered according to the tags information of each node. Export the coordinate information and classification information of each node as a table file, and then import it into Gephi, using Geo Layout to lay out, coloring according to the coordinates, and finally output the svg image. 
+
+#### Final code 
 ```python
-import pymysql,shelve
-with shelve.open("a") as d:
-    if "a" in d:
-        a=d["a"]
-    else:
-        conn=pymysql.connect(
-            host="101.132.109.217",
-            port=3306,
-            user='ieei',
-            password="Diangongdao_B",
-            database='Final_Homework',
-            charset='utf8mb4'
-        )
-        cursor=conn.cursor()
-        cursor.execute("SELECT userId,tags from Users")
-        a=cursor.fetchall()
-        d["a"]=a
-```
+import pymysql
+# retrieve data
+conn=pymysql.connect(
+    host="xxx",
+    port=xxxx,
+    user='xxx',
+    password="xxx",
+    database='xxx',
+    charset='utf8mb4'
+)
+cursor=conn.cursor()
+cursor.execute("SELECT userId,tags from Users")
+a=cursor.fetchall()
+d["a"]=a
 
-
-```python
 b={str(a[i][0]):eval("{"+a[i][1]+"}") for i in range(len(a))}
-```
 
-
-```python
+# select tags for analysis
 tags={}
 for i in b:
     for j in b[i]:
@@ -721,27 +713,16 @@ for i in b:
             tags[j]+=1
         else:
             tags[j]=1
-```
 
-
-```python
 tags={i for i in tags if tags[i]>50}
-```
 
-
-```python
 tags=list(tags)
-```
 
-
-```python
 tmp_tags={i:ii for ii,i in enumerate(tags)}
-```
 
-
-```python
 import numpy as np
 def func(x:dict):
+    '''word2vec'''
     ret=np.zeros(shape=(len(tags),))
     for i in x:
         if i in tmp_tags:
@@ -750,101 +731,34 @@ def func(x:dict):
     if (total > 0):
         ret /= total
     return ret
-```
 
-
-```python
 userIds=list(b.keys())
-```
 
-
-```python
 outp=np.vstack((func(b[i]) for i in userIds))
-```
 
-
-```python
 outp.shape
-```
+>>>(4167, 3681)
 
 
-
-
-    (4167, 3681)
-
-
-
-
-```python
+# Standardization
 from sklearn.preprocessing import StandardScaler
 x = StandardScaler().fit_transform(outp)
-```
-
-
-```python
+# PCA
 from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
 principalComponents = pca.fit_transform(x)
-```
 
-
-```python
+# convert to position on the plot
 pC=principalComponents*500
-```
 
-
-```python
 pC[:,0]*=1.5
 pC[:,1]/=1.5
-```
 
-
-```python
 position={}
 for i in range(len(userIds)):
     position["id_"+userIds[i]]=pC[i]
-```
 
-
-```python
-from bs4 import BeautifulSoup
-with open("index.html","r",encoding="utf-8") as f:
-    soup=BeautifulSoup(f.read(),"lxml")
-```
-
-
-```python
-dxdy={}
-for i in soup.find_all("circle"):
-    dxdy[i["class"][0]]=[position[i["class"][0]][0]-float(i["cx"]),position[i["class"][0]][1]-float(i["cy"])]
-    i["cx"]=str(position[i["class"][0]][0])
-    i["cy"]=str(position[i["class"][0]][1])
-```
-
-
-```python
-for i in soup.find_all("path"):
-    _=i["d"].split()
-    _[1]="{},{}".format(*position[i["class"][0]])
-    _[3]="{},{}".format(*position[i["class"][1]])
-    i["d"]=" ".join(_)
-```
-
-
-```python
-for i in soup.find_all("text"):
-    i["x"]=str(float(i["x"])+dxdy[i["class"][0]][0])
-    i["y"]=str(float(i["y"])+dxdy[i["class"][0]][1])
-```
-
-
-```python
-with open("jl.html","w",encoding="utf-8") as f:
-    f.write(soup.prettify())
-```
-
-
-```python
+# write to csv
 from openpyxl import Workbook
 book = Workbook()
 sheet = book.active
@@ -872,6 +786,7 @@ plt.show()
 
 
 ```python
+# Clustering
 from scipy.cluster.vq import whiten
 from sklearn.cluster import KMeans
 whitened = whiten(principalComponents)
@@ -881,19 +796,7 @@ plt.scatter(whitened[kmeans.labels_==1][:,0], whitened[kmeans.labels_==1][:,1], 
 plt.scatter(whitened[kmeans.labels_==2][:,0], whitened[kmeans.labels_==2][:,1], c='g')
 plt.scatter(whitened[kmeans.labels_==3][:,0], whitened[kmeans.labels_==3][:,1], c='k')
 plt.scatter(whitened[kmeans.labels_==4][:,0], whitened[kmeans.labels_==4][:,1], c='m')
-# plt.scatter(whitened[kmeans.labels_==5][:,0], whitened[kmeans.labels_==5][:,1], c='r')
-# plt.scatter(whitened[kmeans.labels_==6][:,0], whitened[kmeans.labels_==6][:,1], c='aqua')
-# plt.scatter(whitened[kmeans.labels_==7][:,0], whitened[kmeans.labels_==7][:,1], c='y')
 ```
-
-
-
-
-    <matplotlib.collections.PathCollection at 0x1e3627919a0>
-
-
-
-
 ![png](img/PCA2_22_1.png)
 
 
@@ -906,6 +809,31 @@ print(kmeans.n_features_in_)
     1401.1819077759367
     2
     
+```python
+# Add text to the graph
+from bs4 import BeautifulSoup
+with open("index.html","r",encoding="utf-8") as f:
+    soup=BeautifulSoup(f.read(),"lxml")
+
+dxdy={}
+for i in soup.find_all("circle"):
+    dxdy[i["class"][0]]=[position[i["class"][0]][0]-float(i["cx"]),position[i["class"][0]][1]-float(i["cy"])]
+    i["cx"]=str(position[i["class"][0]][0])
+    i["cy"]=str(position[i["class"][0]][1])
+
+for i in soup.find_all("path"):
+    _=i["d"].split()
+    _[1]="{},{}".format(*position[i["class"][0]])
+    _[3]="{},{}".format(*position[i["class"][1]])
+    i["d"]=" ".join(_)
+
+for i in soup.find_all("text"):
+    i["x"]=str(float(i["x"])+dxdy[i["class"][0]][0])
+    i["y"]=str(float(i["y"])+dxdy[i["class"][0]][1])
+
+with open("jl.html","w",encoding="utf-8") as f:
+    f.write(soup.prettify())
+```
 
 ## Website
 ### Page harmony
