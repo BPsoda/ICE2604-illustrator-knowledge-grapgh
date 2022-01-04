@@ -656,7 +656,7 @@ series: [
 &emsp;&emsp;The wordcloud picture look like this:
 <img src="img/echarts.png"></img>
 
-***
+
 ### Map: Data Visualization Tasks and Realization Ideas
 #### The purpose of data visualization
 
@@ -831,7 +831,7 @@ for i in soup.find_all("text"):
 with open("jl.html","w",encoding="utf-8") as f:
     f.write(soup.prettify())
 ```
-
+***
 ## Website
 ### Page harmony
 &emsp;&emsp;The most difficult part of building a website is that it must combine all the work done that realize different features of it. At first, we didn't realize that our teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need `[]` to bond statics, so mistake like picture below happened.
@@ -1021,7 +1021,7 @@ for ill in tqdm(ills):
 ```
 &emsp;&emsp;By doing things like this, when ```source_1.png``` is not valid, the ```src``` would be changed to ```source_2.png```, and when ```source_2.png``` is still not valid, the whole **div** that contains this img would be removed. Thus, the webpage will have no broken image be shown.
 
-***
+
 ### The Tags Page
 #### Picture Part
 &emsp;&emsp;Since our goal is to build a website that shows pisture, it is very important to find a good way to show others the illusts. The **Masonry Layouts** comes to our mind.  
@@ -1281,6 +1281,7 @@ masks.forEach(function (elem){
     }
 })
 ```
+***
 ## Team cooperation
 ### Source Code Management
 &emsp;&emsp;We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.   
@@ -1288,6 +1289,7 @@ masks.forEach(function (elem){
 
 ### Database
 &emsp;&emsp;We put our data on the cloud server of Alilibaba, so every member has access to the latest data.
+***
 ## Future work
 ### Illustration Feature
 &emsp;&emsp;The hash function used on illustrators doesn't discriminate illustrations well.  

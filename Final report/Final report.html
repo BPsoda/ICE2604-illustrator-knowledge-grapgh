@@ -662,7 +662,6 @@ $.getJSON(<span class="hljs-string">&#x27;/data&#x27;</span>).done(<span class="
 </div></code></pre>
 <p>  The wordcloud picture look like this:
 <img src="file:///c:\Users\HP\Desktop\To learn\电类工程导论\Final_project\ICE2604_Final_Project\Final report\img\echarts.png"></img></p>
-<hr>
 <h3 id="map-data-visualization-tasks-and-realization-ideas">Map: Data Visualization Tasks and Realization Ideas</h3>
 <h4 id="the-purpose-of-data-visualization">The purpose of data visualization</h4>
 <p>  In our division of labor, visualization mainly includes the establishment of a relationship graph from the collected illustrators information, which is used to reflect the following relationship between the illustrators as a directed graph.</p>
@@ -806,6 +805,7 @@ dxdy={}
 <span class="hljs-keyword">with</span> open(<span class="hljs-string">&quot;jl.html&quot;</span>,<span class="hljs-string">&quot;w&quot;</span>,encoding=<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:
     f.write(soup.prettify())
 </div></code></pre>
+<hr>
 <h2 id="website">Website</h2>
 <h3 id="page-harmony">Page harmony</h3>
 <p>  The most difficult part of building a website is that it must combine all the work done that realize different features of it. At first, we didn't realize that our teamate will use so many different frames such as Jquery and Bootrap，not mention that the style is quite contradictary，the frames themselves arouse conficts.the most typical one is that the vue and flask all need <code>[]</code> to bond statics, so mistake like picture below happened.
@@ -989,7 +989,6 @@ hea={i[:i.find(<span class="hljs-string">&#x27;:&#x27;</span>)].strip():i[i.find
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </div></code></pre>
 <p>  By doing things like this, when <code>source_1.png</code> is not valid, the <code>src</code> would be changed to <code>source_2.png</code>, and when <code>source_2.png</code> is still not valid, the whole <strong>div</strong> that contains this img would be removed. Thus, the webpage will have no broken image be shown.</p>
-<hr>
 <h3 id="the-tags-page">The Tags Page</h3>
 <h4 id="picture-part">Picture Part</h4>
 <p>  Since our goal is to build a website that shows pisture, it is very important to find a good way to show others the illusts. The <strong>Masonry Layouts</strong> comes to our mind.<br>
@@ -1252,12 +1251,14 @@ masks.forEach(<span class="hljs-function"><span class="hljs-keyword">function</s
     }
 })
 </div></code></pre>
+<hr>
 <h2 id="team-cooperation">Team cooperation</h2>
 <h3 id="source-code-management">Source Code Management</h3>
 <p>  We managed our code with git and a GUI tool: source tree. So far, there are 72 commits, and every group member has made commit to the repository.<br>
 <img src="file:///c:\Users\HP\Desktop\To learn\电类工程导论\Final_project\ICE2604_Final_Project\Final report\img\git.png"></img></p>
 <h3 id="database">Database</h3>
 <p>  We put our data on the cloud server of Alilibaba, so every member has access to the latest data.</p>
+<hr>
 <h2 id="future-work">Future work</h2>
 <h3 id="illustration-feature">Illustration Feature</h3>
 <p>  The hash function used on illustrators doesn't discriminate illustrations well.<br>
